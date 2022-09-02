@@ -1,17 +1,12 @@
 
 from tkinter import*
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import requests
-import main
-from tkinter import ttk
+import app
+import login
 
-class Page(Frame):
-    def __init__(self, *args, **kwargs):
-        Frame.__init__(self, *args, **kwargs)
-    def show(self):
-        self.lift()
 
-def validation_form(self,payload):
+def validation_form(payload):
         
         symbols = ('`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[','}','}','|')
         numbers = ('1','2','3','4','5','6','7','8','9','0')
@@ -60,7 +55,7 @@ def validation_form(self,payload):
 
 
         if length_password <1 or point <1 or  at <1 or symbols_point <1 or numbers_point <1 or length_nome <1 or length_cognome <1 or length_p_iva <1 or length_indirizzo <1:
-            top = Toplevel(self)
+            top = Toplevel(app)
             top.geometry("750x250")
             top.title("Error Registration")
             Label(top, text= "Inserire tutti i campi correttamente!", font=('Mistral 18 bold'),fg="red").place(x=50,y=50)
@@ -68,105 +63,113 @@ def validation_form(self,payload):
             Label(top, text= "- La password deve essere formata da almeno 6 caratteri \n di cui almeno uno speciale e almeno un numero", font=('Mistral 13 bold')).place(x=50,y=140)
             top.mainloop()
 
-class Register(Page):
-   def __init__(self, *args, **kwargs):
-       Page.__init__(self, *args, **kwargs)
-       label = Label(self, text="This is page 1")
-       label.pack(side="top", fill="both", expand=True)
+class Register(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
 
-       
+        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe.pack(side="top", fill="x")
 
+        b1 = Button(buttonframe, text="Login",  command=lambda: controller.show_frame(login.LoginFrame) )
+        b2 = Button(buttonframe, text="Registrati",  command=lambda: controller.show_frame(Register) )
 
-       title = Label(self, text="Registrati qui", font=("times new roman", 20, "bold"), bg="white", fg="green").place(x=270, y=30)
-       nome = Label(self, text="Nome", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=100)
-       self.nome = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.nome.place(x=220, y=100, width=250)
-       
-       f_cognome = Label(self, text="Cognome", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=140)
-       self.cognome = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.cognome.place(x=220, y=140, width=250)
-       
-       f_professione = Label(self, text="Professione", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=180)
-       self.professione = ttk.Combobox(self, font=("times new roman", 13), state='readonly', justify=CENTER)
-       self.professione['values']=("Edilizia", "Idraulica","Giardinaggio","Climatizzazione e riscaldamento","Telecomunicazioni","Rete elettrica ed elettrodomestici")
-       self.professione.place(x=220, y=180, width=250)
-       self.professione.current(0)
-       
-       f_partitaiva = Label(self, text="Partita IVA", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=220)
-       self.partitaiva= Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.partitaiva.place(x=220, y=220, width=250)
-       
-       f_citta = Label(self, text="Città", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=260)
-       self.citta = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.citta.place(x=220, y=260, width=250)
-       
-       f_indirizzo = Label(self, text="Indirizzo", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=300)
-       self.indirizzo = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.indirizzo.place(x=220, y=300, width=250)
-       
-       f_telefono = Label(self, text="Telefono", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=340)
-       self.telefono = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.telefono.place(x=220, y=340, width=250)
-       
-       f_email = Label(self, text="Email", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=380)
-       self.email = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.email.place(x=220, y=380, width=250) 
-       
-       f_password = Label(self, text="Password", font=("times new roman", 15, "bold"), bg="white", fg="gray").place(x=50, y=420)
-       self.password = Entry(self, font=("times new roman", 15), bg="lightgray")
-       self.password.place(x=220, y=420, width=250)
+        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
 
-       def registration_function():
-        url = 'http://localhost:8000/register_professionist'
+        title = Label(self, text="Registrati qui", font=("times new roman", 20, "bold"),  fg="Black").place(x=270, y=30)
+        nome = Label(self, text="Nome", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=100)
+        self.nome = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.nome.place(x=220, y=100, width=250)
         
-        payload = {
-            'nome': self.nome.get(),
-            'cognome': self.cognome.get(),
-            'professione': self.professione.get(),
-            'partitaiva': self.partitaiva.get(),
-            'citta': self.citta.get(),
-            'indirizzo': self.indirizzo.get(),
-            'telefono': self.telefono.get(),
-            'email': self.email.get(),
-            'password': self.password.get()}
-
-        validation_form(self,payload)
-
-        print(payload)
+        f_cognome = Label(self, text="Cognome", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=140)
+        self.cognome = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.cognome.place(x=220, y=140, width=250)
         
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        f_professione = Label(self, text="Professione", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=180)
+        self.professione = ttk.Combobox(self, font=("times new roman", 13), state='readonly', justify=CENTER)
+        self.professione['values']=("Edilizia", "Idraulica","Giardinaggio","Climatizzazione e riscaldamento","Telecomunicazioni","Rete elettrica ed elettrodomestici")
+        self.professione.place(x=220, y=180, width=250)
+        self.professione.current(0)
+        
+        f_partitaiva = Label(self, text="Partita IVA", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=220)
+        self.partitaiva= Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.partitaiva.place(x=220, y=220, width=250)
+        
+        f_citta = Label(self, text="Città", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=260)
+        self.citta = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.citta.place(x=220, y=260, width=250)
+        
+        f_indirizzo = Label(self, text="Indirizzo", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=300)
+        self.indirizzo = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.indirizzo.place(x=220, y=300, width=250)
+        
+        f_telefono = Label(self, text="Telefono", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=340)
+        self.telefono = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.telefono.place(x=220, y=340, width=250)
+        
+        f_email = Label(self, text="Email", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=380)
+        self.email = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.email.place(x=220, y=380, width=250) 
+        
+        f_password = Label(self, text="Password", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=420)
+        self.password = Entry(self, font=("times new roman", 15), bg="lightgray")
+        self.password.place(x=220, y=420, width=250)
 
-        response = requests.post(url, data=payload, headers=headers)
-
-        print("Status code: ", response.status_code)
-        print("Status code: ", response.text)
-
-        if response.text == "Credenziali corrette":
-            main.session['email'] = self.email.get()
-            main.session['logged'] = 1
-            print(main.session['email'])
-            print(main.session['logged'] )
-
-            top = Toplevel(self)
-            top.geometry("750x250")
-            top.title("Account Creato")
-            Label(top, text= "Account creato correttamente!", font=('Mistral 18 bold'),fg="black").place(x=50,y=50)
+        def registration_function(*args):
+            url = 'http://localhost:8000/register_professionist'
             
-            top.mainloop()
+            payload = {
+                'nome': self.nome.get(),
+                'cognome': self.cognome.get(),
+                'professione': self.professione.get(),
+                'partitaiva': self.partitaiva.get(),
+                'citta': self.citta.get(),
+                'indirizzo': self.indirizzo.get(),
+                'telefono': self.telefono.get(),
+                'email': self.email.get(),
+                'password': self.password.get()}
 
-        
-        if response.text == "Email esistente":
-            top = Toplevel(self)
-            top.geometry("750x250")
-            top.title("Error Registration")
-            Label(top, text= "Inserire tutti i campi correttamente!", font=('Mistral 18 bold'),fg="red").place(x=50,y=50)
-            Label(top, text= "- L'email inserita ha già un account", font=('Mistral 13 bold')).place(x=50,y=100)
-            top.mainloop()
+            validation_form(payload)
 
-    
+            print(payload)
+            
+            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-    
-       btn_register = Button(self,  text="Sign In", command=registration_function, font=("times new roman",19), bd=0, cursor="hand2").place(x=365, y=480) 
+            response = requests.post(url, data=payload, headers=headers)
+
+            #print("Status code: ", response.status_code)
+            print("Status code: ", response.text)
+
+            if response.text == "Credenziali corrette":
+                self.session['email'] = self.email.get()
+                self.session['logged'] = 1
+                print(self.session['email'])
+                print(self.session['logged'] )
+
+                top = Toplevel(self)
+                top.geometry("750x250")
+                top.title("Account Creato")
+                messagebox.showinfo('Account creato correttamente!')
+                Label(top, text= "Account creato correttamente!", font=('Mistral 18 bold'),fg="black").place(x=50,y=50)
+                
+                top.mainloop()
+
+            
+            if response.text == "Email esistente":
+                top = Toplevel(self)
+                top.geometry("750x250")
+                top.title("Error Registration")
+                Label(top, text= "Inserire tutti i campi correttamente!", font=('Mistral 18 bold'),fg="red").place(x=50,y=50)
+                Label(top, text= "- L'email inserita ha già un account", font=('Mistral 13 bold')).place(x=50,y=100)
+                top.mainloop()
+
+        btn_register = Button(self,  text="Sign In", command=registration_function, font=("times new roman",19), bd=0, cursor="hand2").place(x=365, y=480) 
+       
+
+
+
+
+   
 
 
 
