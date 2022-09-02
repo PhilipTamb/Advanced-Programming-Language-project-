@@ -1,0 +1,76 @@
+drop database instafix;
+create database instafix;
+use database instafix;
+
+
+create table utenti(
+    id_utente integer(5) NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(20),
+    cognome VARCHAR(20),
+    citta VARCHAR(20),
+    indirizzo VARCHAR(50),
+    PRIMARY KEY(id_utente)
+);
+
+
+create table professionisti(
+    id_professionista integer(5) NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(20),
+    cognome VARCHAR(20),
+    professione VARCHAR(50),
+    partita_iva VARCHAR(30),
+    recensione DECIMAL(2,1) DEFAULT 0.0,
+    citta VARCHAR(20),
+    indirizzo VARCHAR(50),
+    PRIMARY KEY(id_professionista)
+);
+
+create table credenziali(
+    id_credenziale integer(5) NOT NULL AUTO_INCREMENT,
+    id_utente integer(5),
+    id_professionista integer(5),
+    email VARCHAR(50),
+    telefono varchar(13),
+    psw VARCHAR(30),
+    PRIMARY KEY(id_credenziale),
+    FOREIGN KEY (id_utente) REFERENCES utenti (id_utente),
+    FOREIGN KEY (id_professionista) REFERENCES professionisti (id_professionista)
+);
+
+create table tickets(
+    id_ticket integer(5) NOT NULL AUTO_INCREMENT,
+    id_utente integer(5),
+    id_professionista integer(5),
+    stato VARCHAR(10),
+    categoria VARCHAR(40),
+    titolo VARCHAR(50),
+    descrizione text,
+    PRIMARY KEY(id_ticket),
+    FOREIGN KEY (id_professionista) REFERENCES professionisti(id_professionista),
+    FOREIGN KEY (id_utente) REFERENCES utenti(id_utente)
+);
+
+
+create table preventivi(
+    id_preventivo integer(5) NOT NULL AUTO_INCREMENT,
+    id_ticket integer(5),
+    id_professionista integer (5),
+    descrizione_intervento text,
+    materiali_o_ricambi_previsti text,
+    costo FLOAT(8,2),
+    dataora_intervento VARCHAR(20),
+    PRIMARY KEY (id_preventivo),
+    FOREIGN KEY (id_ticket) REFERENCES tickets (id_ticket),
+    FOREIGN KEY (id_professionista) REFERENCES professionisti(id_professionista)
+);
+
+create table fatture(
+	id_fattura integer(5) NOT NULL AUTO_INCREMENT,
+	id_ticket integer(5),
+	id_professionista integer (5),
+	path_fattura text,
+	PRIMARY KEY (id_fattura),
+	FOREIGN KEY (id_ticket) REFERENCES tickets (id_ticket),
+      FOREIGN KEY (id_professionista) REFERENCES professionisti(id_professionista)
+);
+    
