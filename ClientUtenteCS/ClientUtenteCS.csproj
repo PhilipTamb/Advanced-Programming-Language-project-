@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{43DF5E3C-C5A9-4D4B-AD5E-2719AFDE8EFA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ClientUtenteCS</RootNamespace>
+    <AssemblyName>ClientUtenteCS</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ColoreTema.cs" />
+    <Compile Include="Credenziali.cs" />
+    <Compile Include="FormHomepage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormHomepage.Designer.cs">
+      <DependentUpon>FormHomepage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLogin.Designer.cs">
+      <DependentUpon>FormLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormAddTicket.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormAddTicket.Designer.cs">
+      <DependentUpon>FormAddTicket.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormDownloadFattura.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormDownloadFattura.Designer.cs">
+      <DependentUpon>FormDownloadFattura.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormInfoPreventivo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormInfoPreventivo.Designer.cs">
+      <DependentUpon>FormInfoPreventivo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormRecensione.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormRecensione.Designer.cs">
+      <DependentUpon>FormRecensione.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormSelezionaProfessionista.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormSelezionaProfessionista.Designer.cs">
+      <DependentUpon>FormSelezionaProfessionista.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormViewPreventivi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormViewPreventivi.Designer.cs">
+      <DependentUpon>FormViewPreventivi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FormViewTickets.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FormViewTickets.Designer.cs">
+      <DependentUpon>FormViewTickets.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Preventivo.cs" />
+    <Compile Include="Professionista.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Ticket.cs" />
+    <Compile Include="Utente.cs" />
+    <Compile Include="Richieste.cs" />
+    <Compile Include="FormRegistazione.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRegistazione.Designer.cs">
+      <DependentUpon>FormRegistazione.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FormHomepage.resx">
+      <DependentUpon>FormHomepage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLogin.resx">
+      <DependentUpon>FormLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRegistazione.resx">
+      <DependentUpon>FormRegistazione.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormAddTicket.resx">
+      <DependentUpon>FormAddTicket.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormDownloadFattura.resx">
+      <DependentUpon>FormDownloadFattura.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormInfoPreventivo.resx">
+      <DependentUpon>FormInfoPreventivo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormRecensione.resx">
+      <DependentUpon>FormRecensione.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormSelezionaProfessionista.resx">
+      <DependentUpon>FormSelezionaProfessionista.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormViewPreventivi.resx">
+      <DependentUpon>FormViewPreventivi.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FormViewTickets.resx">
+      <DependentUpon>FormViewTickets.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\home icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\output-onlinepngtools.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus img.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\elenco img.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\preventivo img.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ricevuta img.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\recensione img.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if exist "$(TargetPath).locked" del "$(TargetPath).locked"
+if exist "$(TargetPath)" if not exist "$(TargetPath).locked" move "$(TargetPath)" "$(TargetPath).locked"</PreBuildEvent>
+  </PropertyGroup>
+</Project>
