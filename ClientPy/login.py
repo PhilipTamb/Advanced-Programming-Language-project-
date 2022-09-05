@@ -39,12 +39,9 @@ class LoginFrame(Frame):
                         'email': self.email.get()}
 
          headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
          #print(credentials["email"])
          #print(credentials["password"])
-
          response = requests.post(url, data=credentials, headers=headers)
-
          #print("Status code: ", response.status_code)
          print("Status code: ", response.text)
 
@@ -59,11 +56,3 @@ class LoginFrame(Frame):
 
 
         btn_register = Button(frameLogin,  text="Sign In", command=login_function, font=("times new roman",19), bd=0, cursor="hand2").pack(side="top",anchor=CENTER)
-
-        # We use the switch_window_button in order to call the show_frame() method as a lambda function
-        switch_window_button = Button(
-            self,
-            text="Go to the Side Page",
-            command=lambda: controller.show_frame(mainpage.MainPage),
-        )
-        switch_window_button.pack(side="bottom", fill=X)

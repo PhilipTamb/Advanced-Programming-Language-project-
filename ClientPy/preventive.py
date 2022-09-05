@@ -5,7 +5,7 @@ from tkinter import ttk
 import app
 import preventive
 import mainpage
-#import ticket
+import ticket
 import preventive
 import invoices
 import login
@@ -29,18 +29,18 @@ class PreventiveId(Frame):
         buttonframe.pack(side="top", fill="x")
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
-        #b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
+        b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
         b3 = Button(buttonframe, text="Preventivi in Attesa", command=lambda: controller.show_frame(preventive.PreventiveAll))
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
         b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        #b2.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
         b3.grid(row = 0, column = 6, pady = 10, padx = 20)
         b4.grid(row = 0, column = 8, pady = 10, padx = 20)
         b5.grid(row = 0, column = 10, pady = 10, padx = 20)
 
-        title = Label(self, text="Completa il preventivo", font=("times new roman", 20, "bold"), bg="white", fg="green")
+        title = Label(self, text="Completa il preventivo", font=("times new roman", 20, "bold"), fg="Black")
         title.pack(side="top",anchor=CENTER)
 
         frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
@@ -52,38 +52,40 @@ class PreventiveId(Frame):
         contentframe = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=100)
         contentframe.pack(expand=True,  anchor=CENTER)
 
+        lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
+
+        tree = ttk.Treeview(frameTable,name = "tree", selectmode="browse", height=1)
+        tree['columns'] = ('Id', 'Stato', 'Categoria', 'Titolo', 'Descrizione')
+
+        tree.column("#0", width=0,  stretch=NO)
+        tree.column("Id",anchor=CENTER, width=30)
+        tree.column("Stato",anchor=CENTER,width=60)
+        tree.column("Categoria",anchor=CENTER,width=150)
+        tree.column("Titolo",anchor=CENTER,width=100)
+        tree.column("Descrizione",anchor=CENTER,width=400)
+
+        tree.heading("#0",text="",anchor=CENTER)
+        tree.heading("Id",text="Id",anchor=CENTER)
+        tree.heading("Stato",text="Stato",anchor=CENTER)
+        tree.heading("Categoria",text="Categoria",anchor=CENTER)
+        tree.heading("Titolo",text="Titolo",anchor=CENTER)
+        tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
+            
+
 
         def printPreventivi(*args):
             jsn = getTicketProfessionistById()
             preventiveId = -1
-
-            total_rows = len(jsn)
             lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
-            tree = ttk.Treeview(frameTable,name = "tree", selectmode="browse", height=1)
-            tree['columns'] = ('Id', 'Stato', 'Categoria', 'Titolo', 'Descrizione')
-
-            tree.column("#0", width=0,  stretch=NO)
-            tree.column("Id",anchor=CENTER, width=30)
-            tree.column("Stato",anchor=CENTER,width=60)
-            tree.column("Categoria",anchor=CENTER,width=150)
-            tree.column("Titolo",anchor=CENTER,width=100)
-            tree.column("Descrizione",anchor=CENTER,width=400)
-
-            tree.heading("#0",text="",anchor=CENTER)
-            tree.heading("Id",text="Id",anchor=CENTER)
-            tree.heading("Stato",text="Stato",anchor=CENTER)
-            tree.heading("Categoria",text="Categoria",anchor=CENTER)
-            tree.heading("Titolo",text="Titolo",anchor=CENTER)
-            tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
+            total_rows = len(jsn)
             
             for i in range(total_rows):   #row
                 if jsn[i][lst[1]] == 'creato':
                     payload['id_ticket'] = jsn[i][lst[0]]
                     tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
             
-            tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
-
+            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
             tree.pack()
 
             title = Label(infoframe, text="Compila il Preventivo", font=("times new roman", 12, "bold"), fg="Black")
@@ -143,7 +145,10 @@ def getTicketProfessionistById():
 
             #print("Status code: ", response.status_code)
             print("text: ", response.text)
-            return response.json() 
+            if response.text != None :
+                return response.json() 
+            else:
+                return response.text
 
 def logout(controller):
     app.session["email"] = ""
@@ -164,50 +169,31 @@ def insertPreventivoProfessionista(list_entry,controller):
      print(lst[i] + "  ->  " + payload[lst[i]])
  
     payload['email'] = app.session['email']
-
     print(payload['email'])
     print(payload['id_ticket'])
-
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=payload, headers=headers)
-
     print("Status code: ", response.status_code)
     print("text: ", response.text)
 
-
-    if response.text == "Inserito correttamente":
-
-        controller.show_frame(mainpage.MainPage)
-
     if response.text == 'Inserito correttamente':
-        print("FINALMENTE1")
         messagebox.showinfo('Risultato Inserimento',response.text)
-        controller.show_frame(PreventiveAll)
-    if response.text == '"Inserito correttamente"':
-        print("FINALMENTE2")
-        messagebox.showinfo('Risultato Inserimento',response.text)
-        controller.show_frame(PreventiveAll)
+    else:
+        messagebox.showinfo('Risultato Inserimento','inserimento negato')
     return response.text      
-
-
-
 
 def getPreventiviInAttesaProfessionist():
     print("getpreventiviprofessionist")
     url = 'http://localhost:8000/getpreventiviinattesaprofessionist'
 
-    print("email " + app.session['email'])
-
+    #print("email " + app.session['email'])
     credentials = { 'email': app.session['email']}
-
-    print("credentials " + credentials["email"])
-
+    #print("credentials " + credentials["email"])
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
     response = requests.post(url, data=credentials, headers=headers)
+    #print("Status code: ", response.status_code)
+    #print("text: ", response.text)
 
-    print("Status code: ", response.status_code)
-    print("text: ", response.text)
     if response.text != None :
         return response.json() 
     else:
@@ -236,43 +222,50 @@ class PreventiveAll(Frame):
         title = Label(self, text="Preventivi in Attesa di Accettazione dai clienti", font=("times new roman", 20, "bold"), fg="Black")
         title.pack(side="top",anchor=CENTER)
 
-        def printAllPreventivi(*args):
-
-            jsn = getPreventiviInAttesaProfessionist()
-
-            total_rows = len(jsn)
-            print(total_rows)
-            lst = ['IdTicket', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
-
-            tree = ttk.Treeview(frameTable,name = "tree", selectmode="browse", height=1)
-            tree['columns'] = ('Id', 'Descrizione', 'Materiali', 'Costo', 'Data')
-
-            tree.column("#0", width=0,  stretch=NO)
-            tree.column("Id",anchor=CENTER, width=20)
-            tree.column("Descrizione",anchor=CENTER,width=60)
-            tree.column("Materiali",anchor=CENTER,width=150)
-            tree.column("Costo",anchor=CENTER,width=150)
-            tree.column("Data",anchor=CENTER,width=400)
-
-            tree.heading("#0",text="",anchor=CENTER)
-            tree.heading("Id",text="Id",anchor=CENTER)
-            tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
-            tree.heading("Materiali",text="Materiali",anchor=CENTER)
-            tree.heading("Costo",text="Costo",anchor=CENTER)
-            tree.heading("Data",text="Data",anchor=CENTER)
-            
-            for i in range(total_rows):   #row `id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
-                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-
-            
-            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
-
-            tree.pack()
+        lst = ['IdTicket', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
 
         title = Label(self, text="Preventivi", font=("times new roman", 20, "bold"), fg="Black")
         title.pack(side="top",anchor=CENTER)
 
         frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
         frameTable.pack(expand=True,  anchor=CENTER)
+
+        table_scroll = Scrollbar(frameTable)
+        table_scroll.pack(side=RIGHT, fill=Y)
+
+        table_scroll = Scrollbar(frameTable,orient='horizontal')
+        table_scroll.pack(side= BOTTOM,fill=X)
+
+        tree = ttk.Treeview(frameTable,name = "tree",yscrollcommand=table_scroll.set, xscrollcommand =table_scroll.set, selectmode="browse")
+
+        table_scroll.config(command=tree.yview)
+        table_scroll.config(command=tree.xview)
+
+        tree['columns'] = ('Id', 'Descrizione', 'Materiali', 'Costo', 'Data')
+
+        tree.column("#0", width=0,  stretch=NO)
+        tree.column("Id",anchor=CENTER, width=20)
+        tree.column("Descrizione",anchor=CENTER,width=60)
+        tree.column("Materiali",anchor=CENTER,width=150)
+        tree.column("Costo",anchor=CENTER,width=150)
+        tree.column("Data",anchor=CENTER,width=400)
+
+        tree.heading("#0",text="",anchor=CENTER)
+        tree.heading("Id",text="Id",anchor=CENTER)
+        tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
+        tree.heading("Materiali",text="Materiali",anchor=CENTER)
+        tree.heading("Costo",text="Costo",anchor=CENTER)
+        tree.heading("Data",text="Data",anchor=CENTER)
+
+        def printAllPreventivi(*args):
+
+            jsn = getPreventiviInAttesaProfessionist()
+            total_rows = len(jsn)
+            
+            for i in range(total_rows):   #row `id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
+                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+            
+            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
+            tree.pack()
 
         frameTable.bind('<Visibility>',lambda  *args: printAllPreventivi(*args) )

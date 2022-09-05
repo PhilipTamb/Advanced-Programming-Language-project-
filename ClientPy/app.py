@@ -46,22 +46,14 @@ class windows(Tk):
         for F in (login.LoginFrame, register.Register,  mainpage.MainPage, ticket.Ticket, preventive.PreventiveId, preventive.PreventiveAll,invoices.Invoices, bill.Bill):
             frame = F(container, self)
 
-            # the windows class acts as the root window for the frames.
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        # Using a method to switch frames
         self.show_frame(login.LoginFrame)
     
     def show_frame(self, cont):
         frame = self.frames[cont]
-        # raises the current frame to the top
         frame.tkraise()
-
-
-
-
-
 
 if __name__ == "__main__":
     testObj = windows()

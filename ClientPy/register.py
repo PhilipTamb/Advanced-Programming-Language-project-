@@ -131,20 +131,17 @@ class Register(Frame):
 
             validation_form(payload)
 
-            print(payload)
-            
+            #print(payload)
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-
             response = requests.post(url, data=payload, headers=headers)
-
             #print("Status code: ", response.status_code)
-            print("Status code: ", response.text)
+            #print("Status code: ", response.text)
 
             if response.text == "Credenziali corrette":
                 self.session['email'] = self.email.get()
                 self.session['logged'] = 1
-                print(self.session['email'])
-                print(self.session['logged'] )
+                #print(self.session['email'])
+                #print(self.session['logged'] )
 
                 top = Toplevel(self)
                 top.geometry("750x250")
