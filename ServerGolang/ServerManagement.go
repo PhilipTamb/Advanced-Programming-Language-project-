@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 func startServer() {
@@ -34,6 +35,7 @@ func startServer() {
 	http.HandleFunc("/getpreventivoprofessionistbyidticket", getpreventivoprofessionistbyidticket)
 	http.HandleFunc("/insertFatturaProfessionist", insertFatturaProfessionist)
 	http.HandleFunc("/updatecostoProfessionist", updatecostoProfessionist)
+	http.HandleFunc("/uploadfile", uploadfile)
 	http.ListenAndServe(":8000", nil)
 
 }
@@ -274,9 +276,7 @@ func insertpreventivoprofessionist(w http.ResponseWriter, req *http.Request) {
 	dataora_intervento := req.Form.Get("dataora_intervento")
 	resp := InsertPreventivoProfessionistQuery(sqlDB, mail, id_ticket, descrizione_intervento, materiali_o_ricambi_previsti, costo, dataora_intervento)
 	fmt.Println(resp)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	fmt.Fprintf(w, resp)
 }
 
 func getpreventiviinattesaprofessionist(w http.ResponseWriter, req *http.Request) {
@@ -311,9 +311,7 @@ func insertFatturaProfessionist(w http.ResponseWriter, req *http.Request) {
 	mail := req.Form.Get("email")
 	resp := insertFatturaProfessionistQuery(sqlDB, mail, id_ticket, id_preventivo, id_professionista, path)
 	fmt.Println(resp)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	fmt.Fprintf(w, resp)
 }
 
 func updatecostoProfessionist(w http.ResponseWriter, req *http.Request) {
@@ -322,12 +320,39 @@ func updatecostoProfessionist(w http.ResponseWriter, req *http.Request) {
 	id_ticket := req.Form.Get("id_ticket")
 	id_preventivo := req.Form.Get("id_preventivo")
 	id_professionista := req.Form.Get("id_professionista")
-	costo := req.Form.Get("path")
+	costo := req.Form.Get("costo")
 	mail := req.Form.Get("email")
 
 	resp := updateCostoProfessionistQuery(sqlDB, mail, id_ticket, id_preventivo, id_professionista, costo)
 	fmt.Println(resp)
+	fmt.Fprintf(w, resp)
+
+}
+
+func uploadfile(w http.ResponseWriter, req *http.Request) {
+	print("uploadfile\n")
+
+	req.ParseMultipartForm(32 << 20) //32Mb
+	file, handler, err := req.FormFile("file")
+
+	print("\nfile  ", file)
+	print("\nhandler  ", handler)
+
+	if err != nil {
+		print("\nError", err)
+	}
+	defer file.Close()
+
+	f, err := os.OpenFile("./fatture/fatture"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+
+	print("\nOpenFile  ", f)
+	if err != nil {
+		print("\nError", err)
+	}
+	defer f.Close()
+	io.Copy(f, file) //salvataggio file
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(resp)
+	json.NewEncoder(w).Encode(handler.Filename)
 }

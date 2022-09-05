@@ -898,7 +898,7 @@ func getPreventiviProfessionistByIdTicketQuery(datab *sql.DB, mail string, idTic
 		}
 	}
 
-	q2 := fmt.Sprintf("SELECT * FROM preventivi WHERE id_ticket = '%s' AND  id_professionista = '%d' ", idTicket, idProf) // AND stato='in attesa' il professionista visualizza i preventi
+	q2 := fmt.Sprintf("SELECT * FROM preventivi WHERE id_ticket = '%s' AND  id_professionista = '%d' ", idTicket, idProf)
 	r2, err3 := datab.Query(q2)
 	if err3 != nil {
 		fmt.Println(err3)
@@ -922,24 +922,7 @@ func getPreventiviProfessionistByIdTicketQuery(datab *sql.DB, mail string, idTic
 }
 
 func insertFatturaProfessionistQuery(datab *sql.DB, mail string, id_ticket string, id_preventivo string, id_professionista string, path string) string {
-	q1 := fmt.Sprintf("SELECT id_professionista FROM professionisti WHERE id_professionista=(SELECT id_professionista FROM credenziali "+
-		"WHERE email='%s')", mail)
-	r1, err1 := datab.Query(q1)
-	if err1 != nil {
-		fmt.Println(err1)
-	} else {
-		defer r1.Close()
-	}
-
-	var idProf int
-	for r1.Next() {
-		err2 := r1.Scan(&idProf)
-		if err2 != nil {
-			log.Fatal(err2)
-		}
-	}
-
-	q2 := fmt.Sprintf("INSERT INTO fatture (id_ticket, id_professionista, path_fattura) VALUES ('%s', '%d', '%s')", id_ticket, idProf, path)
+	q2 := fmt.Sprintf("INSERT INTO fatture (id_ticket, id_professionista, path_fattura) VALUES ('%s', '%s', '%s')", id_ticket, id_professionista, path)
 	fmt.Println(q2)
 	r2, err3 := datab.Query(q2)
 
@@ -967,27 +950,7 @@ func insertFatturaProfessionistQuery(datab *sql.DB, mail string, id_ticket strin
 
 func updateCostoProfessionistQuery(datab *sql.DB, mail string, id_ticket string, id_preventivo string, id_professionista string, costo string) string {
 	print("getTicketsProfessionistByIdQuery\n")
-	q1 := fmt.Sprintf("SELECT id_professionista FROM professionisti WHERE id_professionista=(SELECT id_professionista FROM credenziali "+
-		"WHERE email='%s')", mail)
-	r1, err1 := datab.Query(q1)
-	if err1 != nil {
-		fmt.Println(err1)
-	} else {
-		defer r1.Close()
-	}
-	fmt.Println(r1)
-
-	var id int
-	for r1.Next() {
-		err2 := r1.Scan(&id)
-		if err2 != nil {
-			log.Fatal(err2)
-		}
-	}
-
-	fmt.Println(id)
-
-	q2 := fmt.Sprintf("UPDATE preventivi SET costo = '%s' WHERE id_preventivo =  '%s' AND id_ticket = '%s' AND id_professionista = '%d' ", costo, id_preventivo, id_ticket, id)
+	q2 := fmt.Sprintf("UPDATE preventivi SET costo = '%s' WHERE id_preventivo =  '%s' AND id_ticket = '%s' AND id_professionista = '%s' ", costo, id_preventivo, id_ticket, id_professionista)
 	fmt.Println(q2)
 	r2, err3 := datab.Query(q2)
 
@@ -1000,5 +963,5 @@ func updateCostoProfessionistQuery(datab *sql.DB, mail string, id_ticket string,
 		defer r2.Close()
 	}
 
-	return "Inserito correttamente"
+	return "inserito correttamente"
 }
