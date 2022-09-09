@@ -1,10 +1,9 @@
-
 from tkinter import*
 from tkinter import ttk, messagebox
 import requests
 import app
 import login
-
+from PIL import Image, ImageTk
 
 def validation_form(payload):
         
@@ -67,53 +66,74 @@ class Register(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self, highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe, bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Login",  command=lambda: controller.show_frame(login.LoginFrame) )
         b2 = Button(buttonframe, text="Registrati",  command=lambda: controller.show_frame(Register) )
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 8, pady = 10, padx = 20)
 
-        title = Label(self, text="Registrati qui", font=("times new roman", 20, "bold"),  fg="Black").place(x=270, y=30)
-        nome = Label(self, text="Nome", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=100)
-        self.nome = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.nome.place(x=220, y=100, width=250)
+        frameLogin = Frame(self,name= "frameTable" , highlightthickness=2, width=900, height=900)
+        frameLogin.pack(expand=True, fill="both", anchor=CENTER,  padx = 5)
+
+        title = Label(frameLogin, text="Registrati qui", font=("times new roman", 20, "bold"),  fg="Black").pack(side="top",anchor=CENTER,  pady = 20, padx = 50)
+
+        leftframe = Frame(frameLogin,name= "leftframe" , highlightthickness=2, )
+        leftframe.pack(side="left",expand=True, fill="both", padx=(100, 0), pady=(10, 0) )
+
+
+        rightframe = Frame(frameLogin,name= "rightframe" , highlightthickness=2)
+        rightframe.pack(side="right" ,expand=True,fill="both", padx=(0, 100), pady=(10, 0))
+
+        nome = Label(leftframe, text="Nome", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.nome = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.nome.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_cognome = Label(self, text="Cognome", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=140)
-        self.cognome = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.cognome.place(x=220, y=140, width=250)
+        f_cognome = Label(leftframe, text="Cognome", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.cognome = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.cognome.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_professione = Label(self, text="Professione", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=180)
-        self.professione = ttk.Combobox(self, font=("times new roman", 13), state='readonly', justify=CENTER)
+        f_professione = Label(leftframe, text="Professione", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.professione = ttk.Combobox(rightframe, font=("times new roman", 13), state='readonly', justify=CENTER)
         self.professione['values']=("Edilizia", "Idraulica","Giardinaggio","Climatizzazione e riscaldamento","Telecomunicazioni","Rete elettrica ed elettrodomestici")
-        self.professione.place(x=220, y=180, width=250)
+        self.professione.pack(side="top",anchor=CENTER,  pady = 5)
+
         self.professione.current(0)
         
-        f_partitaiva = Label(self, text="Partita IVA", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=220)
-        self.partitaiva= Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.partitaiva.place(x=220, y=220, width=250)
+        f_partitaiva = Label(leftframe, text="Partita IVA", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.partitaiva= Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.partitaiva.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_citta = Label(self, text="Città", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=260)
-        self.citta = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.citta.place(x=220, y=260, width=250)
+        f_citta = Label(leftframe, text="Città", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.citta = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.citta.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_indirizzo = Label(self, text="Indirizzo", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=300)
-        self.indirizzo = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.indirizzo.place(x=220, y=300, width=250)
+        f_indirizzo = Label(leftframe, text="Indirizzo", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.indirizzo = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.indirizzo.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_telefono = Label(self, text="Telefono", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=340)
-        self.telefono = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.telefono.place(x=220, y=340, width=250)
+        f_telefono = Label(leftframe, text="Telefono", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.telefono = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.telefono.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_email = Label(self, text="Email", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=380)
-        self.email = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.email.place(x=220, y=380, width=250) 
+        f_email = Label(leftframe, text="Email", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.email = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.email.pack(side="top",anchor=CENTER,  pady = 5)
         
-        f_password = Label(self, text="Password", font=("times new roman", 15, "bold"),  fg="gray").place(x=50, y=420)
-        self.password = Entry(self, font=("times new roman", 15), bg="lightgray")
-        self.password.place(x=220, y=420, width=250)
+        f_password = Label(leftframe, text="Password", font=("times new roman", 15, "bold"),  fg="gray").pack(side="top",anchor=CENTER,  pady = 5)
+        self.password = Entry(rightframe, font=("times new roman", 15), bg="lightgray")
+        self.password.pack(side="top",anchor=CENTER,  pady = 5)
 
         def registration_function(*args):
             url = 'http://localhost:8000/register_professionist'
@@ -131,25 +151,17 @@ class Register(Frame):
 
             validation_form(payload)
 
-            #print(payload)
+
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=payload, headers=headers)
-            #print("Status code: ", response.status_code)
-            #print("Status code: ", response.text)
 
             if response.text == "Credenziali corrette":
-                self.session['email'] = self.email.get()
-                self.session['logged'] = 1
-                #print(self.session['email'])
-                #print(self.session['logged'] )
-
                 top = Toplevel(self)
                 top.geometry("750x250")
                 top.title("Account Creato")
                 messagebox.showinfo('Account creato correttamente!')
                 Label(top, text= "Account creato correttamente!", font=('Mistral 18 bold'),fg="black").place(x=50,y=50)
                 
-                top.mainloop()
 
             
             if response.text == "Email esistente":
@@ -160,7 +172,7 @@ class Register(Frame):
                 Label(top, text= "- L'email inserita ha già un account", font=('Mistral 13 bold')).place(x=50,y=100)
                 top.mainloop()
 
-        btn_register = Button(self,  text="Sign In", command=registration_function, font=("times new roman",19), bd=0, cursor="hand2").place(x=365, y=480) 
+        btn_register = Button(rightframe,  text="Sign In", command=registration_function, font=("times new roman",19)).pack(side="right",anchor=CENTER,  pady = 5)
        
 
 

@@ -11,7 +11,8 @@ import invoices
 import login
 from fpdf import FPDF
 from tkinter import ttk
-#`id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
+from PIL import Image, ImageTk
+
 bill = {
         'id_ticket': ' ',
         'id_preventivo': ' ',
@@ -22,8 +23,7 @@ bill = {
         "descrizione" : ' ',
         'materiali_o_ricambi_previsti': ' ',
         'costo': ' ',
-        'dataora_intervento': ' ',
-        'email': ' '
+        'dataora_intervento': ' '
         }
 
 ticketId = -1
@@ -32,8 +32,17 @@ class Bill(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self, highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe, bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
@@ -41,36 +50,36 @@ class Bill(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
-        title = Label(self, text="Fattura", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="Fatturazione", font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=900, height=30)
-        frameTable.pack(expand=True,  anchor=CENTER)
+        frameTable = Frame(self, highlightthickness=2, width=900, height=30)
+        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
-        frameTable2 = Frame(self, highlightbackground="red", highlightthickness=2, width=900, height=30)
-        frameTable2.pack(expand=True,  anchor=CENTER)
+        frameTable2 = Frame(self, highlightthickness=2, width=900, height=30)
+        frameTable2.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
-        title = Label(frameTable, text="Ticket", font=("times new roman", 12, "bold"), fg="Black")
+        title = Label(frameTable, text="Ticket", font=("times new roman", 12, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        title = Label(frameTable2, text="Preventivo", font=("times new roman", 12, "bold"), fg="Black")
+        title = Label(frameTable2, text="Preventivo", font=("times new roman", 12, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        infoframe = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=100)
+        infoframe = Frame(self, highlightthickness=2, width=700, height=100)
         infoframe.pack(expand=True,  anchor=CENTER)
 
-        contentframe = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=100)
+        contentframe = Frame(self, highlightthickness=2, width=700, height=100)
         contentframe.pack(expand=True,  anchor=CENTER)
 
          # crea PDF fattura ------------------------------------------------------------------------------
             
-        title = Label(infoframe, text="Crea e Invia la Fattura", font=("times new roman", 12, "bold"), fg="Black")
+        title = Label(infoframe, text="Crea e Invia la Fattura", font=("times new roman", 12, "bold"), fg="gray")
         title.pack(side="top",anchor=CENTER)
         b = Button(infoframe, text="Crea Fattura", command= lambda  : insertFatturaProfessionist())
         b.pack(side="top",anchor=CENTER)
@@ -100,6 +109,9 @@ class Bill(Frame):
             tree.heading("Titolo",text="Titolo",anchor=CENTER)
             tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
             
+            for i in tree.get_children():
+              tree.delete(i)
+
             for i in range(total_rows):   #row
                 bill['id_ticket'] = jsn[i][lst[0]]
                 bill['stato'] = jsn[i][lst[1]]
@@ -135,6 +147,9 @@ class Bill(Frame):
             treePreventivo.heading("Materiali/Ricambi",text="Materiali/Ricambi",anchor=CENTER)
             treePreventivo.heading("Costo",text="Costo",anchor=CENTER)
             treePreventivo.heading("Data e Ora",text="Data e Ora",anchor=CENTER)
+
+            for i in treePreventivo.get_children():
+              treePreventivo.delete(i)
   
             for i in range(total_rows):   #row
                 bill['id_preventivo'] = js[i][lst[0]]
@@ -149,12 +164,12 @@ class Bill(Frame):
             treePreventivo.pack()
  # FORM _________________________________________________________________________________________________________________________________________           
 
-            title = Label(contentframe, text="Aggiorna Costo Intervento", font=("times new roman", 12, "bold"), fg="Black")
+            title = Label(contentframe, text="Aggiorna Costo Intervento", font=("times new roman", 12, "bold"), fg="Gray")
             title.grid(row= 1, column=1 )
 
             lst = ['Id', 'IdTicket', 'IdProfessionista', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
 
-            self.e = Entry(contentframe, width=10, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+            self.e = Entry(contentframe, width=10, bg='white',fg='Gray',font=('Arial', 10, 'bold'))
             list_entry = []
             self.e.grid(row=4, column=1)
             list_entry.append(self.e)
@@ -173,12 +188,9 @@ class Bill(Frame):
 def getTicketProfessionistById():
             print("getTicketProfessionistById")
             url = 'http://localhost:8000/geticketsprofessionistbyid'
-            #print("id ticket : " + str(ticketId))
-            credentials = { 'email': app.session['email'], 'idTicket': ticketId }
+            credentials = { 'id_professionista': app.session['id'], 'id_ticket': ticketId }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=credentials, headers=headers)
-            #print("Status code: ", response.status_code)
-            #print("text: ", response.text)
 
             if response.text != None :
                 return response.json() 
@@ -186,10 +198,10 @@ def getTicketProfessionistById():
                 return response.text  
         
 def getPreventivoByIdTicket():
-            print("getPreventivoProfessionistById")
+            print("getPreventivoByIdTicket(")
             url = 'http://localhost:8000/getpreventivoprofessionistbyidticket'
             #print("id preventivo : " + str(ticketId))
-            credentials = { 'email': app.session['email'], 'idTicket': ticketId }
+            credentials = { 'id_professionista': app.session['id'], 'id_ticket': ticketId }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=credentials, headers=headers)
             #print("Status code: ", response.status_code)
@@ -214,7 +226,8 @@ def insertFatturaProfessionist():
     pdf.cell( 100, 20, txt ="Materiali e Ricambi: " + str(bill['materiali_o_ricambi_previsti']),ln = 2, align = 'C')
     pdf.cell( 200, 20, txt =" Costo: " + str(bill['costo'])  + " euro",ln = 2, align = 'C')
 
-    path = "./fatture/Fattura-Id" + str(bill['id_ticket']) +"-p"+ str(bill['id_preventivo'])+"-"+str(random()) + ".pdf"
+    nome_pdf = "Fattura-Id" + str(bill['id_ticket']) +"-p"+ str(bill['id_preventivo'])+"-"+str(random()) + ".pdf"
+    path = "./fatture/" + nome_pdf
     pdf.output(path)
 #Upload 
     file ={'file': open(path, 'rb')} 
@@ -224,22 +237,18 @@ def insertFatturaProfessionist():
 
     if test_response.ok:
         print("Upload effettuato correttamente")
-        print("\n")
-        print(test_response)
-        print("\n")
-        print(test_response.text)
     else:
         print("upload non riuscito")
 
 # insert db 
     url = 'http://localhost:8000/insertFatturaProfessionist'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    bill['email'] = app.session['email']
-    credentials = { 'email': app.session['email'], 
+ 
+    credentials = { 
                 'id_ticket': bill['id_ticket'],
                 'id_professionista': bill['id_professionista'],
                 'id_preventivo': bill['id_preventivo'],
-                'path': path
+                'path': "http://localhost/fatture/" + nome_pdf 
                  }
     response = requests.post(url, data=credentials, headers=headers)
     #print("Status code: ", response.status_code)
@@ -260,7 +269,6 @@ def updateCosto(list_entry):  # da cambiare ****__
         print(obj.get())
   
     payload = { 
-                'email': app.session['email'], 
                 'id_ticket': bill['id_ticket'],
                 'id_professionista': bill['id_professionista'],
                 'id_preventivo': bill['id_preventivo'],
@@ -279,28 +287,8 @@ def updateCosto(list_entry):  # da cambiare ****__
     return response.text      
 
 
-
-
-def getFatturaProfessionist(): #id_fattura	id_ticket	id_professionista	path_fattura
-    print("getpreventiviprofessionist")
-    url = 'http://localhost:8000/getpreventiviprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
-
-    if response.text != None :
-        return response.json() 
-    else:
-        return response.text  
- 
-
 def logout(controller):
-    app.session["email"] = ""
+    app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame) 
 
@@ -311,23 +299,32 @@ class billAll(Frame):
         buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
 
+        imgframe = Frame(buttonframe, highlightbackground="blue", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
+
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
         b3 = Button(buttonframe, text="Preventivi in Attesa", command=lambda: controller.show_frame(preventive.PreventiveAll))
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
-        title = Label(self, text="Preventivi", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="Preventivi", font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
         frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
-        frameTable.pack(expand=True,  anchor=CENTER)
+        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
         lst = ['IdTicket', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
 

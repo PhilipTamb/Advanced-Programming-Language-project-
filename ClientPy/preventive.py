@@ -9,7 +9,8 @@ import ticket
 import preventive
 import invoices
 import login
-#`id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
+from PIL import Image, ImageTk
+
 payload = {
         'descrizione_intervento': ' ',
         'materiali_o_ricambi_previsti': ' ',
@@ -25,8 +26,17 @@ class PreventiveId(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self,highlightbackground="gray", bg="gray92",highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe,  bg="gray92",highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
@@ -34,22 +44,25 @@ class PreventiveId(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
-        title = Label(self, text="Completa il preventivo", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="Completa il preventivo", font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
-        frameTable.pack(expand=True,  anchor=CENTER)
+        frameTable = Frame(self, highlightthickness=2, width=700, height=30)
+        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
-        infoframe = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=100)
+        infoframe = Frame(self,  highlightthickness=2, width=700, height=100)
         infoframe.pack(expand=True,  anchor=CENTER)
 
-        contentframe = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=100)
+        title = Label(infoframe, text="Compila il Preventivo", font=("times new roman", 12, "bold"), fg="Gray")
+        title.pack(side="top",anchor=CENTER)
+
+        contentframe = Frame(self, highlightthickness=2, width=700, height=100)
         contentframe.pack(expand=True,  anchor=CENTER)
 
         lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
@@ -70,16 +83,26 @@ class PreventiveId(Frame):
         tree.heading("Categoria",text="Categoria",anchor=CENTER)
         tree.heading("Titolo",text="Titolo",anchor=CENTER)
         tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
+
+        buttonDenyframe = Frame(self, highlightthickness=2, width=200, height=200)
+        buttonDenyframe.pack(side="top", fill="x")
+
+        title = Label(buttonDenyframe, text="Rifiuta il Ticket",  font=("times new roman", 12, "bold"), fg="Gray")  
+        title.pack(side="top",anchor=CENTER,  pady = 10, padx=10)
+
+        btn_deny = Button(buttonDenyframe,  text="Rifiuta", command=denyticket, font=("times new roman",12)).pack(side="top",anchor=CENTER,  pady = 10, padx=10)
+
             
-
-
         def printPreventivi(*args):
             jsn = getTicketProfessionistById()
             preventiveId = -1
             lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
             total_rows = len(jsn)
-            
+
+            for i in tree.get_children():
+              tree.delete(i)
+
             for i in range(total_rows):   #row
                 if jsn[i][lst[1]] == 'creato':
                     payload['id_ticket'] = jsn[i][lst[0]]
@@ -88,9 +111,6 @@ class PreventiveId(Frame):
             #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
             tree.pack()
 
-            title = Label(infoframe, text="Compila il Preventivo", font=("times new roman", 12, "bold"), fg="Black")
-            title.pack(side="top",anchor=CENTER)
-
             total_rows = len(jsn)
 
             lst = ["Descrizione Intervento", "Materiali e Ricambi", "Costo", "Data e ora Intervento"] #"Id Ticket"
@@ -98,15 +118,15 @@ class PreventiveId(Frame):
                 # code for creating table
             for z in range(len(lst)):
                 if  lst[z] == 'Id Ticket':
-                    self.e = Entry(contentframe, width=10, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+                    self.e = Entry(contentframe, width=10, bg='LightBlue',fg='Gray',font=('Arial', 10, 'bold'))
                 elif lst[z] == 'Descrizione Intervento':
-                    self.e = Entry(contentframe, width=40, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+                    self.e = Entry(contentframe, width=40, bg='LightBlue',fg='Gray',font=('Arial', 10, 'bold'))
                 elif lst[z] == 'Materiali e Ricambi':
-                    self.e = Entry(contentframe, width=40, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+                    self.e = Entry(contentframe, width=40, bg='LightBlue',fg='Gray',font=('Arial', 10, 'bold'))
                 elif lst[z] == 'Costo':
-                    self.e = Entry(contentframe, width=10, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+                    self.e = Entry(contentframe, width=10, bg='LightBlue',fg='Gray',font=('Arial', 10, 'bold'))
                 else:
-                    self.e = Entry(contentframe, width=15, bg='LightBlue',fg='Black',font=('Arial', 10, 'bold'))
+                    self.e = Entry(contentframe, width=15, bg='LightBlue',fg='Gray',font=('Arial', 10, 'bold'))
 
                 self.e.grid(row= 0, column=z)
                 self.e.insert(END, lst[z])  
@@ -139,7 +159,7 @@ def getTicketProfessionistById():
             print("getTicketProfessionistById")
             url = 'http://localhost:8000/geticketsprofessionistbyid'
 
-            credentials = { 'email': app.session['email'], 'idTicket': preventiveId }
+            credentials = { 'id_professionista': app.session['id'], 'id_ticket': preventiveId }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=credentials, headers=headers)
 
@@ -151,7 +171,7 @@ def getTicketProfessionistById():
                 return response.text
 
 def logout(controller):
-    app.session["email"] = ""
+    app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame)     
 
@@ -166,15 +186,11 @@ def insertPreventivoProfessionista(list_entry,controller):
 
     for i in range(len(list_entry)):
      payload[lst[i]] = list_entry[i].get()
-     print(lst[i] + "  ->  " + payload[lst[i]])
+     #print(lst[i] + "  ->  " + payload[lst[i]])
  
-    payload['email'] = app.session['email']
-    print(payload['email'])
-    print(payload['id_ticket'])
+    payload['id_professionista'] = app.session['id']
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=payload, headers=headers)
-    print("Status code: ", response.status_code)
-    print("text: ", response.text)
 
     if response.text == 'Inserito correttamente':
         messagebox.showinfo('Risultato Inserimento',response.text)
@@ -182,30 +198,39 @@ def insertPreventivoProfessionista(list_entry,controller):
         messagebox.showinfo('Risultato Inserimento','inserimento negato')
     return response.text      
 
-def getPreventiviInAttesaProfessionist():
-    print("getpreventiviprofessionist")
-    url = 'http://localhost:8000/getpreventiviinattesaprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
+def denyticket():
+    print("/denyticket")
+    url = 'http://localhost:8000/denyticket'
+    print(preventiveId)
+    payload = { 'id_ticket': preventiveId }
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
+    response = requests.post(url, data=payload, headers=headers)
+    print("Status code: ", response.status_code)
+    print("text: ", response.text)
 
-    if response.text != None :
-        return response.json() 
+    if response.text == 'Preventivo rifiutato':
+        messagebox.showinfo('Risultato Inserimento','Ticket rifiutato')
     else:
-        return response.text  
+        messagebox.showinfo('Risultato Inserimento','Non siamo riusciti a rifiutare il ticket')
+    return response.text      
+
 
     
 class PreventiveAll(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self, highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe, bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
@@ -213,22 +238,19 @@ class PreventiveAll(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
-        title = Label(self, text="Preventivi in Attesa di Accettazione dai clienti", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="Preventivi in Attesa di Accettazione dai clienti", font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
         lst = ['IdTicket', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
 
-        title = Label(self, text="Preventivi", font=("times new roman", 20, "bold"), fg="Black")
-        title.pack(side="top",anchor=CENTER)
-
-        frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
-        frameTable.pack(expand=True,  anchor=CENTER)
+        frameTable = Frame(self, highlightthickness=2, width=700, height=30)
+        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
         table_scroll = Scrollbar(frameTable)
         table_scroll.pack(side=RIGHT, fill=Y)
@@ -236,36 +258,53 @@ class PreventiveAll(Frame):
         table_scroll = Scrollbar(frameTable,orient='horizontal')
         table_scroll.pack(side= BOTTOM,fill=X)
 
-        tree = ttk.Treeview(frameTable,name = "tree",yscrollcommand=table_scroll.set, xscrollcommand =table_scroll.set, selectmode="browse")
+        tree1 = ttk.Treeview(frameTable,name = "tree1",yscrollcommand=table_scroll.set, xscrollcommand =table_scroll.set, selectmode="browse")
 
-        table_scroll.config(command=tree.yview)
-        table_scroll.config(command=tree.xview)
+        table_scroll.config(command=tree1.yview)
+        table_scroll.config(command=tree1.xview)
 
-        tree['columns'] = ('Id', 'Descrizione', 'Materiali', 'Costo', 'Data')
+        tree1['columns'] = ('Id', 'Descrizione', 'Materiali', 'Costo', 'Data')
 
-        tree.column("#0", width=0,  stretch=NO)
-        tree.column("Id",anchor=CENTER, width=20)
-        tree.column("Descrizione",anchor=CENTER,width=60)
-        tree.column("Materiali",anchor=CENTER,width=150)
-        tree.column("Costo",anchor=CENTER,width=150)
-        tree.column("Data",anchor=CENTER,width=400)
+        tree1.column("#0", width=0,  stretch=NO)
+        tree1.column("Id",anchor=CENTER, width=30)
+        tree1.column("Descrizione",anchor=CENTER,width=150)
+        tree1.column("Materiali",anchor=CENTER,width=150)
+        tree1.column("Costo",anchor=CENTER,width=150)
+        tree1.column("Data",anchor=CENTER,width=400)
 
-        tree.heading("#0",text="",anchor=CENTER)
-        tree.heading("Id",text="Id",anchor=CENTER)
-        tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
-        tree.heading("Materiali",text="Materiali",anchor=CENTER)
-        tree.heading("Costo",text="Costo",anchor=CENTER)
-        tree.heading("Data",text="Data",anchor=CENTER)
+        tree1.heading("#0",text="",anchor=CENTER)
+        tree1.heading("Id",text="Id",anchor=CENTER)
+        tree1.heading("Descrizione",text="Descrizione",anchor=CENTER)
+        tree1.heading("Materiali",text="Materiali",anchor=CENTER)
+        tree1.heading("Costo",text="Costo",anchor=CENTER)
+        tree1.heading("Data",text="Data",anchor=CENTER)
+
+        tree1.pack()
 
         def printAllPreventivi(*args):
-
             jsn = getPreventiviInAttesaProfessionist()
             total_rows = len(jsn)
-            
+
+            for i in tree1.get_children():
+              tree1.delete(i)
+
             for i in range(total_rows):   #row `id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
-                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-            
-            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
-            tree.pack()
+                tree1.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+    
+            #tree1.bind("<Button-1>", lambda *args: self._handle_button(*args,tree1,controller)) #'<Alt-t>'
+            tree1.pack()
 
         frameTable.bind('<Visibility>',lambda  *args: printAllPreventivi(*args) )
+
+def getPreventiviInAttesaProfessionist():
+    print("getpreventiviprofessionist")
+    url = 'http://localhost:8000/getpreventiviinattesaprofessionist'
+
+    credentials = { 'id_professionista': app.session['id']}
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    response = requests.post(url, data=credentials, headers=headers)
+
+    if response.text != None :
+        return response.json() 
+    else:
+        return response.text

@@ -4,11 +4,10 @@ import requests
 import app
 import preventive
 import mainpage
-
 import preventive
 import invoices
 import login
-
+from PIL import Image, ImageTk
 
 
 class Ticket(Frame):
@@ -16,8 +15,17 @@ class Ticket(Frame):
         Frame.__init__(self, parent)
         print("Ticket")
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self, highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe, bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(Ticket))
@@ -25,17 +33,17 @@ class Ticket(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
-        frameTable = Frame(self,name= "frameTable" , highlightbackground="red", highlightthickness=2, width=700, height=250)
-        frameTable.pack(side="right",  anchor=CENTER, pady=5, padx=5)
-                
-        title = Label(self, text="TICKET", font=("times new roman", 20, "bold"),fg="Black")
+        title = Label(self, text="TICKET", font=("times new roman", 20, "bold"),fg="Gray")
         title.pack(side="top",anchor=CENTER)
+
+        frameTable = Frame(self,name= "frameTable" ,  highlightthickness=2, width=700, height=250)
+        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
 
         lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
@@ -70,6 +78,10 @@ class Ticket(Frame):
         def printTicket(*args):
             jsn = getTicketProfessionist()
             total_rows = len(jsn)
+            
+            for i in tree.get_children():
+              tree.delete(i)
+
             for i in range(total_rows):   
               if jsn[i][lst[1]] == 'creato' :
                 tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
@@ -110,21 +122,17 @@ class Ticket(Frame):
 
 
 def logout(controller):
-    app.session["email"] = ""
+    app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame)
 
 def getTicketProfessionist():
     print("getTicketProfessionist")
     url = 'http://localhost:8000/geticketsprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
+    credentials = { 'id_professionista': app.session['id']}
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
+
     if response.text != None :
         return response.json() 
     else:

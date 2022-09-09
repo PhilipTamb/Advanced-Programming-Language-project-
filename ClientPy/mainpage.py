@@ -6,6 +6,7 @@ import preventive
 import invoices
 import login
 from tkinter import ttk
+from PIL import Image, ImageTk
 
 nome = None
 
@@ -13,14 +14,24 @@ class MainPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         print("MainPage")
+        print(app.session["id"])
 
-        title = Label(self, text="HOME", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="HOME",  font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self,highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="left")
 
-        frameTable = Frame(self,name= "frameTable" , highlightbackground="red", highlightthickness=2, width=700, height=800)
+        imgframe = Frame(buttonframe,bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 1, column = 0, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
+
+        frameTable = Frame(self,name= "frameTable", highlightthickness=2, width=700, height=800)
         frameTable.pack(side="right",  anchor=CENTER, pady=5, padx=5)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(MainPage))
@@ -29,11 +40,11 @@ class MainPage(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 4, column = 0, pady = 10, padx = 10)
-        b2.grid(row = 6, column = 0, pady = 10, padx = 10)
-        b3.grid(row = 8, column = 0, pady = 10, padx = 10)
-        b4.grid(row = 10, column = 0, pady = 10, padx = 10)
-        b5.grid(row = 12, column = 0, pady = 10, padx = 10)
+        b1.grid(row = 6, column = 0, pady = 10, padx = 10)
+        b2.grid(row = 8, column = 0, pady = 10, padx = 10)
+        b3.grid(row = 10, column = 0, pady = 10, padx = 10)
+        b4.grid(row = 12, column = 0, pady = 10, padx = 10)
+        b5.grid(row = 14, column = 0, pady = 10, padx = 10)
 
         lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
@@ -66,13 +77,14 @@ class MainPage(Frame):
 
         def printTicket(*args):
             nome = getnome()
-            l1 = Label(buttonframe, text="Benvenuto " + nome, font=("times new roman", 15, "bold"), fg="Black")
-            l2 = Label(buttonframe, text=" " + nome, font=("times new roman", 15, "bold"), fg="Black")
-            l1.grid(row = 1, column = 0, pady = 10, padx = 10)
-            l2.grid(row = 2, column = 0, pady = 10, padx = 10)
+            l1 = Label(buttonframe, text="Benvenuto " + nome, bg="gray92", font=("times new roman", 15, "bold"), fg="Gray")
+            l1.grid(row = 3, column = 0, pady = 0, padx = 0)
+
             jsn = getTicketProfessionist()
-            
             total_rows = len(jsn)
+
+            for i in tree.get_children():
+              tree.delete(i)
             
             for i in range(total_rows):   
               if jsn[i][lst[1]] == 'creato' or jsn[i][lst[1]] == 'in attesa' or jsn[i][lst[1]] == 'in corso':
@@ -111,21 +123,17 @@ class MainPage(Frame):
                   controller.show_frame(preventive.PreventiveId)
 
 def logout(controller):
-    app.session["email"] = ""
+    app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame)
 
 def getTicketProfessionist():
     print("getTicketProfessionist")
     url = 'http://localhost:8000/geticketsprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
+    credentials = { 'id_professionista': app.session['id']}
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
+
     if response.text != None :
         return response.json() 
     else:
@@ -134,10 +142,7 @@ def getTicketProfessionist():
 def getnome():
     print("getnome")
     url = 'http://localhost:8000/getnomeprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
+    credentials = { 'id_professionista': app.session['id']}
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=credentials, headers=headers)
 

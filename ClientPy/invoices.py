@@ -1,7 +1,5 @@
-from array import array
 from tkinter import* 
 from tkinter import ttk
-from turtle import width
 import requests
 import bill
 import app
@@ -11,6 +9,7 @@ import ticket
 import preventive
 import invoices
 import login
+from PIL import Image, ImageTk
 
 payload = {
         'descrizione_intervento': ' ',
@@ -21,17 +20,22 @@ payload = {
         'email': ' ',
         }
 
-ticket = -1
-
-
-
 class Invoices(Frame):
  def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         print("Ticket")
 
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
+        buttonframe = Frame(self, highlightbackground="gray", bg="gray92", highlightthickness=2, width=700, height=250)
         buttonframe.pack(side="top", fill="x")
+
+        imgframe = Frame(buttonframe, bg="gray92", highlightthickness=2, width=200, height=200)
+        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
+
+        load = Image.open("./img/instafix.png")
+        render = ImageTk.PhotoImage(load)
+        img = Label(imgframe, image=render)
+        img.image = render
+        img.pack(side="top",anchor=CENTER)
 
         b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
         b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
@@ -39,28 +43,22 @@ class Invoices(Frame):
         b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
         b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
 
-        b1.grid(row = 0, column = 2, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
+        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
+        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
+        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
+        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
 
         lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
-        title = Label(self, text="Fatture in corso", font=("times new roman", 20, "bold"), fg="Black")
+        title = Label(self, text="Fatture in corso", font=("times new roman", 20, "bold"), fg="Gray")
         title.pack(side="top",anchor=CENTER)
 
-        title2 = Label(self, text="selezionare la fattura da mandare al cliente", font=("times new roman", 15, "bold"), fg="Black")
+        title2 = Label(self, text="selezionare la fattura da mandare al cliente", font=("times new roman", 15, "bold"), fg="Gray")
         title2.pack(side="top",anchor=CENTER)
 
-        frameTable = Frame(self,name= "frameTable" , highlightbackground="red", highlightthickness=2, width=700, height=250)
+        frameTable = Frame(self,name= "frameTable", highlightthickness=2, width=700, height=250)
         frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
-
-        updateButton = Frame(self,name= "updateButton" , highlightbackground="red", highlightthickness=2, width=700, height=250)
-        updateButton.pack(expand=True,  anchor=SE, pady=5, padx=5)
-
-        b = Button(updateButton, text="Aggiorna", command= lambda *args: printTicket(*args))
-        b.pack(side="right",anchor=CENTER)
 
         table_scroll = Scrollbar(frameTable)
         table_scroll.pack(side=RIGHT, fill=Y)
@@ -88,14 +86,15 @@ class Invoices(Frame):
         tree.heading("Categoria",text="Categoria",anchor=CENTER)
         tree.heading("Titolo",text="Titolo",anchor=CENTER)
         tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
+  
                 
         def printTicket(*args):
             jsn = getTicketProfessionist()
-            
             total_rows = len(jsn)
-            print(jsn)
-            print(type(jsn))
-            
+
+            for i in tree.get_children():
+              tree.delete(i)
+              
             for i in range(total_rows):   #row
              if jsn[i][lst[1]] == 'in corso' :
                   tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
@@ -104,6 +103,7 @@ class Invoices(Frame):
             tree.pack()
         
         frameTable.bind('<Visibility>',lambda  *args: printTicket(*args) )
+
 
 
  def _handle_button(self,event,tree,controller, *args):
@@ -116,21 +116,16 @@ class Invoices(Frame):
                   controller.show_frame(bill.Bill )
 
 def logout(controller):
-    app.session["email"] = ""
+    app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame) 
 
 def getTicketProfessionist():
     print("getTicketProfessionist")
     url = 'http://localhost:8000/geticketsprofessionist'
-
-    #print("email " + app.session['email'])
-    credentials = { 'email': app.session['email']}
-    #print("credentials " + credentials["email"])
+    credentials = { 'id_professionista': app.session['id']}
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
 
     if response.text != None :
         return response.json() 
