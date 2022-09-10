@@ -90,7 +90,7 @@ class Ticket(Frame):
             tree.pack()
         
 
-        frameTable.bind('<Visibility>',lambda  *args: printTicket(*args) )
+        frameTable.bind('<Expose>',lambda  *args: printTicket(*args) )
 
 
  

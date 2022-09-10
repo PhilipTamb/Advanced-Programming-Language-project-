@@ -158,13 +158,10 @@ class PreventiveId(Frame):
 def getTicketProfessionistById():
             print("getTicketProfessionistById")
             url = 'http://localhost:8000/geticketsprofessionistbyid'
-
             credentials = { 'id_professionista': app.session['id'], 'id_ticket': preventiveId }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=credentials, headers=headers)
 
-            #print("Status code: ", response.status_code)
-            print("text: ", response.text)
             if response.text != None :
                 return response.json() 
             else:
@@ -201,12 +198,9 @@ def insertPreventivoProfessionista(list_entry,controller):
 def denyticket():
     print("/denyticket")
     url = 'http://localhost:8000/denyticket'
-    print(preventiveId)
     payload = { 'id_ticket': preventiveId }
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     response = requests.post(url, data=payload, headers=headers)
-    print("Status code: ", response.status_code)
-    print("text: ", response.text)
 
     if response.text == 'Preventivo rifiutato':
         messagebox.showinfo('Risultato Inserimento','Ticket rifiutato')
@@ -294,7 +288,7 @@ class PreventiveAll(Frame):
             #tree1.bind("<Button-1>", lambda *args: self._handle_button(*args,tree1,controller)) #'<Alt-t>'
             tree1.pack()
 
-        frameTable.bind('<Visibility>',lambda  *args: printAllPreventivi(*args) )
+        frameTable.bind('<Expose>',lambda  *args: printAllPreventivi(*args) )
 
 def getPreventiviInAttesaProfessionist():
     print("getpreventiviprofessionist")

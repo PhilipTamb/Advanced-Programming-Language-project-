@@ -180,7 +180,7 @@ class Bill(Frame):
             self.e.grid(row=5, column=3) # , width=4, height=2
 
 
-        contentframe.bind('<Visibility>',lambda  *args: printPreventivi(*args) )
+        contentframe.bind('<Expose>',lambda  *args: printPreventivi(*args) )
     
 
         
@@ -291,77 +291,3 @@ def logout(controller):
     app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame) 
-
-class billAll(Frame):
-    def __init__(self, parent, controller):
-        Frame.__init__(self, parent)
-        
-        buttonframe = Frame(self, highlightbackground="blue", highlightthickness=2, width=700, height=250)
-        buttonframe.pack(side="top", fill="x")
-
-        imgframe = Frame(buttonframe, highlightbackground="blue", highlightthickness=2, width=200, height=200)
-        imgframe.grid(row = 0, column = 1, pady = 10, padx = 10)
-
-        load = Image.open("./img/instafix.png")
-        render = ImageTk.PhotoImage(load)
-        img = Label(imgframe, image=render)
-        img.image = render
-        img.pack(side="top",anchor=CENTER)
-
-        b1 = Button(buttonframe, text="Home", command=lambda: controller.show_frame(mainpage.MainPage))
-        b2 = Button(buttonframe, text="Nuovi Ticket", command=lambda: controller.show_frame(ticket.Ticket))
-        b3 = Button(buttonframe, text="Preventivi in Attesa", command=lambda: controller.show_frame(preventive.PreventiveAll))
-        b4 = Button(buttonframe, text="Fatturazione", command=lambda: controller.show_frame(invoices.Invoices))
-        b5 = Button(buttonframe, text="Logout", command= lambda:logout(controller))
-
-        b1.grid(row = 0, column = 4, pady = 10, padx = 20)
-        b2.grid(row = 0, column = 6, pady = 10, padx = 20)
-        b3.grid(row = 0, column = 8, pady = 10, padx = 20)
-        b4.grid(row = 0, column = 10, pady = 10, padx = 20)
-        b5.grid(row = 0, column = 12, pady = 10, padx = 20)
-
-        title = Label(self, text="Preventivi", font=("times new roman", 20, "bold"), fg="Gray")
-        title.pack(side="top",anchor=CENTER)
-
-        frameTable = Frame(self, highlightbackground="red", highlightthickness=2, width=700, height=30)
-        frameTable.pack(expand=True,  anchor=CENTER, pady=5, padx=5)
-
-        lst = ['IdTicket', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
-
-        tree = ttk.Treeview(frameTable,name = "tree", selectmode="browse", height=1)
-        tree['columns'] = ('Id', 'Descrizione', 'Materiali', 'Costo', 'Data')
-
-        tree.column("#0", width=0,  stretch=NO)
-        tree.column("Id",anchor=CENTER, width=20)
-        tree.column("Descrizione",anchor=CENTER,width=60)
-        tree.column("Materiali",anchor=CENTER,width=150)
-        tree.column("Costo",anchor=CENTER,width=150)
-        tree.column("Data",anchor=CENTER,width=400)
-
-        tree.heading("#0",text="",anchor=CENTER)
-        tree.heading("Id",text="Id",anchor=CENTER)
-        tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
-        tree.heading("Materiali",text="Materiali",anchor=CENTER)
-        tree.heading("Costo",text="Costo",anchor=CENTER)
-        tree.heading("Data",text="Data",anchor=CENTER)
-     
-
-        def printAllPreventivi(*args):
-            print("printAllPreventivi")
-            jsn = getPreventiviProfessionist()
-
-            total_rows = len(jsn)
-            print(total_rows)
-
-            
-            for i in range(total_rows):   #row `id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
-                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-
-            
-            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
-
-            tree.pack()
-
-
-
-        frameTable.bind('<Visibility>',lambda  *args: printAllPreventivi(*args) )

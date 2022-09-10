@@ -75,26 +75,26 @@ class MainPage(Frame):
         tree.heading("Titolo",text="Titolo",anchor=CENTER)
         tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
 
-        def printTicket(*args):
-            nome = getnome()
-            l1 = Label(buttonframe, text="Benvenuto " + nome, bg="gray92", font=("times new roman", 15, "bold"), fg="Gray")
-            l1.grid(row = 3, column = 0, pady = 0, padx = 0)
+        frameTable.bind('<Expose>',lambda  *args: MainPage.printTicket(tree,buttonframe,*args) )
 
-            jsn = getTicketProfessionist()
-            total_rows = len(jsn)
+    def printTicket(tree,buttonframe,*args):
+        nome = MainPage.getnome()
+        l1 = Label(buttonframe, text="Benvenuto " + nome, bg="gray92", font=("times new roman", 15, "bold"), fg="Gray")
+        l1.grid(row = 3, column = 0, pady = 0, padx = 0)
 
-            for i in tree.get_children():
-              tree.delete(i)
-            
-            for i in range(total_rows):   
-              if jsn[i][lst[1]] == 'creato' or jsn[i][lst[1]] == 'in attesa' or jsn[i][lst[1]] == 'in corso':
+        jsn = MainPage.getTicketProfessionist()
+        total_rows = len(jsn)
+        lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
+
+        for i in tree.get_children():
+            tree.delete(i)
+        
+        for i in range(total_rows):   
+            if jsn[i][lst[1]] == 'creato' or jsn[i][lst[1]] == 'in attesa' or jsn[i][lst[1]] == 'in corso':
                 tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-            
-            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
-            tree.pack()
-
-        frameTable.bind('<Visibility>',lambda  *args: printTicket(*args) )
-
+        
+        #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
+        tree.pack()
 
     def _handle_button(self,event,tree,controller, *args):
             print(self)
@@ -121,34 +121,39 @@ class MainPage(Frame):
                 preventive.preventiveId = record[0]
                 if preventive.preventiveId  != -1:
                   controller.show_frame(preventive.PreventiveId)
+    
+    def getnome():
+        print("getnome")
+        url = 'http://localhost:8000/getnomeprofessionist'
+        credentials = { 'id_professionista': app.session['id']}
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        response = requests.post(url, data=credentials, headers=headers)
+
+        print("Status code: ", response.status_code)
+        print("text: ", response.text)
+        return response.text
+    
+    def getTicketProfessionist():
+        print("getTicketProfessionist")
+        url = 'http://localhost:8000/geticketsprofessionist'
+        credentials = { 'id_professionista': app.session['id']}
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        response = requests.post(url, data=credentials, headers=headers)
+
+        if response.text != None :
+            return response.json() 
+        else:
+            return response.text
 
 def logout(controller):
     app.session["id"] = ""
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame)
 
-def getTicketProfessionist():
-    print("getTicketProfessionist")
-    url = 'http://localhost:8000/geticketsprofessionist'
-    credentials = { 'id_professionista': app.session['id']}
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(url, data=credentials, headers=headers)
 
-    if response.text != None :
-        return response.json() 
-    else:
-        return response.text
 
-def getnome():
-    print("getnome")
-    url = 'http://localhost:8000/getnomeprofessionist'
-    credentials = { 'id_professionista': app.session['id']}
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(url, data=credentials, headers=headers)
 
-    print("Status code: ", response.status_code)
-    print("text: ", response.text)
-    return response.text
+
 
 
     

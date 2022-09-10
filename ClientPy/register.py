@@ -1,7 +1,7 @@
 from tkinter import*
 from tkinter import ttk, messagebox
 import requests
-import app
+from tkinter import messagebox
 import login
 from PIL import Image, ImageTk
 
@@ -54,13 +54,9 @@ def validation_form(payload):
 
 
         if length_password <1 or point <1 or  at <1 or symbols_point <1 or numbers_point <1 or length_nome <1 or length_cognome <1 or length_p_iva <1 or length_indirizzo <1:
-            top = Toplevel(app)
-            top.geometry("750x250")
-            top.title("Error Registration")
-            Label(top, text= "Inserire tutti i campi correttamente!", font=('Mistral 18 bold'),fg="red").place(x=50,y=50)
-            Label(top, text= "- L'email deve essere del formato: example@dominio.it", font=('Mistral 13 bold')).place(x=50,y=100)
-            Label(top, text= "- La password deve essere formata da almeno 6 caratteri \n di cui almeno uno speciale e almeno un numero", font=('Mistral 13 bold')).place(x=50,y=140)
-            top.mainloop()
+            messagebox.showwarning('Errore nella Registrazione', "Inserire tutti i campi correttamente! \n " +
+            "- L'email deve essere del formato: example@dominio.it \n"+
+            "- La password deve essere formata da almeno 6 caratteri \n di cui almeno uno speciale e almeno un numero")
 
 class Register(Frame):
     def __init__(self, parent, controller):

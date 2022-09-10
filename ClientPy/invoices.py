@@ -102,7 +102,7 @@ class Invoices(Frame):
             tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
             tree.pack()
         
-        frameTable.bind('<Visibility>',lambda  *args: printTicket(*args) )
+        frameTable.bind('<Expose>',lambda  *args: printTicket(*args) )
 
 
 
