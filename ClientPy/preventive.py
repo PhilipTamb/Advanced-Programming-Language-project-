@@ -153,7 +153,7 @@ class PreventiveId(Frame):
                 self.e = Button(contentframe, text=">>>", command= lambda  : insertPreventivoProfessionista(list_entry,controller))
                 self.e.grid(row=i+1, column=len(lst)+1 ) # , width=4, height=2
 
-        contentframe.bind('<Visibility>',lambda  *args: printPreventivi(*args) )
+        contentframe.bind('<Expose>',lambda  *args: printPreventivi(*args) )
 
 def getTicketProfessionistById():
             print("getTicketProfessionistById")
@@ -191,6 +191,7 @@ def insertPreventivoProfessionista(list_entry,controller):
 
     if response.text == 'Inserito correttamente':
         messagebox.showinfo('Risultato Inserimento',response.text)
+        controller.show_frame(mainpage.MainPage)
     else:
         messagebox.showinfo('Risultato Inserimento','inserimento negato')
     return response.text      

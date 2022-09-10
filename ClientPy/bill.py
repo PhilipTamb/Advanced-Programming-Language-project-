@@ -7,6 +7,7 @@ import preventive
 import mainpage
 import ticket
 import preventive
+import mainpage
 import invoices
 import login
 from fpdf import FPDF
@@ -81,7 +82,7 @@ class Bill(Frame):
             
         title = Label(infoframe, text="Crea e Invia la Fattura", font=("times new roman", 12, "bold"), fg="gray")
         title.pack(side="top",anchor=CENTER)
-        b = Button(infoframe, text="Crea Fattura", command= lambda  : insertFatturaProfessionist())
+        b = Button(infoframe, text="Crea Fattura", command= lambda  : insertFatturaProfessionist(controller))
         b.pack(side="top",anchor=CENTER)
         
 # tabella ticket -------------------------------------------------------------------------------------------------------
@@ -213,7 +214,7 @@ def getPreventivoByIdTicket():
                 return response.text  
 
 
-def insertFatturaProfessionist():  
+def insertFatturaProfessionist(controller):  
     print("/insertFatturaProfessionist")
 # creazione PDF
     pdf = FPDF()
@@ -236,7 +237,8 @@ def insertFatturaProfessionist():
     test_response = requests.post(url, files = file )
 
     if test_response.ok:
-        print("Upload effettuato correttamente")
+        #print("Upload effettuato correttamente")
+        controller.show_frame(mainpage.MainPage)
     else:
         print("upload non riuscito")
 
