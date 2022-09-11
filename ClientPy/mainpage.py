@@ -84,6 +84,12 @@ class MainPage(Frame):
         l1 = Label(buttonframe, text="Benvenuto " + nome, bg="gray92", font=("times new roman", 15, "bold"), fg="Gray")
         l1.grid(row = 3, column = 0, pady = 0, padx = 0)
 
+        recensione = MainPage.getRecensione()
+        l2 = Label(buttonframe, text="La tua recensione\n media è: " + recensione, bg="gray92", font=("times new roman", 15, "bold"), fg="Gray")
+        l2.grid(row = 4, column = 0, pady = 0, padx = 0)
+
+
+
         jsn = MainPage.getTicketProfessionist()
 
         if(len(tree.get_children())!= 0 ):
@@ -119,6 +125,15 @@ class MainPage(Frame):
         credentials = { 'id_professionista': app.session['id']}
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         response = requests.post(url, data=credentials, headers=headers)
+        return response.text
+
+    def getRecensione():
+        print("getRecensione")
+        url = 'http://localhost:8000/getrecensioneprofessionist'
+        credentials = { 'id_professionista': app.session['id']}
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        response = requests.post(url, data=credentials, headers=headers)
+        print("recensione " + response.text )
         return response.text
     
     def getTicketProfessionist():
