@@ -673,8 +673,6 @@ func registerQueryProfessionist(datab *sql.DB, name string, surname string, prof
 func getnomeprofessionistQuery(datab *sql.DB, id_professionista string) string {
 	query := fmt.Sprintf("SELECT nome FROM professionisti WHERE id_professionista='%s' ", id_professionista)
 	res, err := datab.Query(query)
-	fmt.Println(query)
-	fmt.Println(res)
 
 	if err != nil {
 		fmt.Println(err)
@@ -694,11 +692,8 @@ func getnomeprofessionistQuery(datab *sql.DB, id_professionista string) string {
 
 func getTicketsProfessionistQuery(datab *sql.DB, id_professionista string) []Ticket {
 	print("getTicketsProfessionistQuery\n")
-	q2 := fmt.Sprintf("SELECT id_ticket, stato, categoria, titolo, descrizione FROM tickets WHERE "+
-		"id_professionista='%s'", id_professionista)
+	q2 := fmt.Sprintf("SELECT id_ticket, stato, categoria, titolo, descrizione FROM tickets WHERE id_professionista='%s'", id_professionista)
 	r2, err3 := datab.Query(q2)
-
-	fmt.Println(r2)
 
 	if err3 != nil {
 		fmt.Println(err3)
@@ -714,8 +709,7 @@ func getTicketsProfessionistQuery(datab *sql.DB, id_professionista string) []Tic
 		if err4 != nil {
 			log.Fatal(err4)
 		}
-		fmt.Println(tickets)
-		fmt.Println(richiesta)
+
 		tickets = append(tickets, richiesta)
 	}
 
@@ -761,8 +755,6 @@ func InsertPreventivoProfessionistQuery(datab *sql.DB, id_professionista string,
 		" VALUES ('%s', '%s', '%s', '%s', '%s', '%s')", id_ticket, id_professionista, descrizione_intervento, materiali_o_ricambi_previsti, costo, dataora_intervento)
 	fmt.Println(q2)
 	r2, err3 := datab.Query(q2)
-
-	fmt.Println(r2)
 
 	if err3 != nil {
 		fmt.Println(err3)
@@ -817,8 +809,6 @@ func getPreventiviProfessionistByIdTicketQuery(datab *sql.DB, id_professionista 
 	} else {
 		defer r2.Close()
 	}
-	fmt.Println(q2)
-	fmt.Println(r2)
 	var preventivo Preventivi
 	var listaPreventivi []Preventivi
 
@@ -863,10 +853,8 @@ func insertFatturaProfessionistQuery(datab *sql.DB, id_ticket string, id_prevent
 func updateCostoProfessionistQuery(datab *sql.DB, id_ticket string, id_preventivo string, id_professionista string, costo string) string {
 	print("getTicketsProfessionistByIdQuery\n")
 	q2 := fmt.Sprintf("UPDATE preventivi SET costo = '%s' WHERE id_preventivo =  '%s' AND id_ticket = '%s' AND id_professionista = '%s' ", costo, id_preventivo, id_ticket, id_professionista)
-	fmt.Println(q2)
-	r2, err3 := datab.Query(q2)
 
-	fmt.Println(r2)
+	r2, err3 := datab.Query(q2)
 
 	if err3 != nil {
 		fmt.Println(err3)
@@ -912,6 +900,32 @@ func loginProfessionistQuery(datab *sql.DB, email string, psw string) string {
 		}
 	}
 
+	if idProf == "" {
+		return "Credenziali errate"
+	}
 	return idProf
 
+}
+
+func getRecensioneProfessionistQuery(datab *sql.DB, id_professionista string) string {
+	print("\n getRecensioneProfessionistQuery")
+	query := fmt.Sprintf(" SELECT recensione FROM professionisti WHERE id_professionista = '%s' ", id_professionista)
+	res, err := datab.Query(query)
+	fmt.Println(query)
+	fmt.Println(res)
+
+	if err != nil {
+		fmt.Println(err)
+		return "Errore generico"
+	}
+	defer res.Close()
+
+	var recensione string
+	for res.Next() {
+		err2 := res.Scan(&recensione)
+		if err2 != nil {
+			log.Fatal(err2)
+		}
+	}
+	return recensione
 }
