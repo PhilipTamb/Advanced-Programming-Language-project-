@@ -9,7 +9,7 @@ def validation_form(payload):
         
         symbols = ('`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[','}','}','|')
         numbers = ('1','2','3','4','5','6','7','8','9','0')
-        at = point = symbols_point =  numbers_point =  length_password =  length_nome = length_cognome = length_p_iva = length_indirizzo = 0
+        at = point = symbols_point =  numbers_point =  length_password =  length_nome = length_cognome = length_p_iva = length_indirizzo = length_telefono = length_citta = 0
         
         for i in range(len(payload['email'])) :
             if payload['email'][i] == '@' :
@@ -48,15 +48,23 @@ def validation_form(payload):
 
         if len(payload['indirizzo']) > 5 :
                     length_indirizzo = 1
+                    
+        if len(payload['telefono']) > 9 :
+                  length_telefono = 1
+
+        if len(payload['citta']) > 2 :
+                  length_citta = 1
         
         
-        print(f"at: ", at," point: ", point , "  numbers_point: ", numbers_point , "  symbols_point: ", symbols_point , "lenght :" , length_password)
+        print(f"at: ", at," point: ", point , "  symbols_point: ", symbols_point, "  numbers_point: ", numbers_point ,"  length_password: ", length_password, " length_nome: ", length_nome , " length_cognome: ", length_cognome, " length_p_iva: ",  length_p_iva,  " length_indirizzo: ", length_indirizzo, " length_telefono: ", length_telefono, " length_citta: ", length_citta )
 
 
-        if length_password <1 or point <1 or  at <1 or symbols_point <1 or numbers_point <1 or length_nome <1 or length_cognome <1 or length_p_iva <1 or length_indirizzo <1:
+        if  at <1  or point <1 or symbols_point <1 or numbers_point <1 or length_password<1 or length_nome <1 or length_cognome <1 or length_p_iva <1 or length_indirizzo <1 or length_telefono <1 or length_citta <1:
             messagebox.showwarning('Errore nella Registrazione', "Inserire tutti i campi correttamente! \n " +
             "- L'email deve essere del formato: example@dominio.it \n"+
-            "- La password deve essere formata da almeno 6 caratteri \n di cui almeno uno speciale e almeno un numero")
+            "- La password deve essere formata da almeno 6 caratteri \n di cui almeno un simbolo speciale e almeno un numero")
+            return "no"
+        else: return "ok"
 
 class Register(Frame):
     def __init__(self, parent, controller):
@@ -144,29 +152,19 @@ class Register(Frame):
                 'telefono': self.telefono.get(),
                 'email': self.email.get(),
                 'password': self.password.get()}
-
-            validation_form(payload)
-
-
-            headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-            response = requests.post(url, data=payload, headers=headers)
-
-            if response.text == "Credenziali corrette":
-                top = Toplevel(self)
-                top.geometry("750x250")
-                top.title("Account Creato")
-                messagebox.showinfo('Account creato correttamente!')
-                Label(top, text= "Account creato correttamente!", font=('Mistral 18 bold'),fg="black").place(x=50,y=50)
-                
-
             
-            if response.text == "Email esistente":
-                top = Toplevel(self)
-                top.geometry("750x250")
-                top.title("Error Registration")
-                Label(top, text= "Inserire tutti i campi correttamente!", font=('Mistral 18 bold'),fg="red").place(x=50,y=50)
-                Label(top, text= "- L'email inserita ha già un account", font=('Mistral 13 bold')).place(x=50,y=100)
-                top.mainloop()
+            res_controll = validation_form(payload)
+            print("res_controll " + res_controll)
+
+            if( res_controll == 'ok'):
+                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                response = requests.post(url, data=payload, headers=headers)
+
+                if response.text == "Account creato":
+                    messagebox.showinfo('Info account','Account creato correttamente!')
+                elif response.text == "Email esistente":
+                    messagebox.showinfo('Info account','Account creato correttamente!')
+
 
         btn_register = Button(rightframe,  text="Sign In", command=registration_function, font=("times new roman",19)).pack(side="right",anchor=CENTER,  pady = 5)
        

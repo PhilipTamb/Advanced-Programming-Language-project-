@@ -90,9 +90,6 @@ class Bill(Frame):
             jsn = getTicketProfessionistById()
             ticketId = -1
 
-            total_rows = len(jsn)
-            lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
-
             tree = ttk.Treeview(frameTable,name = "tree", selectmode="browse", height=1)
             tree['columns'] = ('Id', 'Stato', 'Categoria', 'Titolo', 'Descrizione')
 
@@ -109,20 +106,25 @@ class Bill(Frame):
             tree.heading("Categoria",text="Categoria",anchor=CENTER)
             tree.heading("Titolo",text="Titolo",anchor=CENTER)
             tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
-            
-            for i in tree.get_children():
-              tree.delete(i)
 
-            for i in range(total_rows):   #row
-                bill['id_ticket'] = jsn[i][lst[0]]
-                bill['stato'] = jsn[i][lst[1]]
-                bill['categoria'] = jsn[i][lst[2]]
-                bill['titolo'] = jsn[i][lst[3]]
-                bill['descrizione'] = jsn[i][lst[4]]
+            if(len(tree.get_children())!= 0 ):
+                for i in tree.get_children():
+                    tree.delete(i)
 
-                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-            
-            tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
+            if(jsn != None):
+                total_rows = len(jsn)
+                lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
+
+                for i in range(total_rows):   #row
+                    bill['id_ticket'] = jsn[i][lst[0]]
+                    bill['stato'] = jsn[i][lst[1]]
+                    bill['categoria'] = jsn[i][lst[2]]
+                    bill['titolo'] = jsn[i][lst[3]]
+                    bill['descrizione'] = jsn[i][lst[4]]
+
+                    tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+                
+                tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
 
             tree.pack()
 
@@ -130,9 +132,6 @@ class Bill(Frame):
             print("getPreventivoByIdTicket()")
             js = getPreventivoByIdTicket()
             preventiveId = -1
-
-            total_rows = len(js)
-            lst = ['Id', 'IdTicket', 'IdProfessionista', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
 
             treePreventivo = ttk.Treeview(frameTable2,name = "treePreventivo", selectmode="browse", height=1)
             treePreventivo['columns'] = ('Descrizione', 'Materiali/Ricambi', 'Costo', 'Data e Ora')
@@ -149,19 +148,22 @@ class Bill(Frame):
             treePreventivo.heading("Costo",text="Costo",anchor=CENTER)
             treePreventivo.heading("Data e Ora",text="Data e Ora",anchor=CENTER)
 
-            for i in treePreventivo.get_children():
-              treePreventivo.delete(i)
-  
-            for i in range(total_rows):   #row
-                bill['id_preventivo'] = js[i][lst[0]]
-                bill['id_professionista'] = js[i][lst[2]]
-                bill['descrizione'] = js[i][lst[3]]
-                bill['materiali_o_ricambi_previsti'] = js[i][lst[4]]
-                bill['costo'] = js[i][lst[5]]
-                bill['dataora_intervento'] = js[i][lst[6]]
-                treePreventivo.insert(parent='',index='end',iid=i,text='', values=( js[i][lst[3]], js[i][lst[4]], js[i][lst[5]], js[i][lst[6]]))
-            
-            #treePreventivo.bind("<Button-1>", lambda *args: self._handle_button(*args,treePreventivo,controller)) #'<Alt-t>'
+            if(jsn != None):
+                total_rows = len(js)
+                lst = ['Id', 'IdTicket', 'IdProfessionista', 'Descrizione', 'MaterialiRicambi', 'Costo', 'DataOra']
+
+                for i in treePreventivo.get_children():
+                   treePreventivo.delete(i)
+    
+                for i in range(total_rows):   #row
+                    bill['id_preventivo'] = js[i][lst[0]]
+                    bill['id_professionista'] = js[i][lst[2]]
+                    bill['descrizione'] = js[i][lst[3]]
+                    bill['materiali_o_ricambi_previsti'] = js[i][lst[4]]
+                    bill['costo'] = js[i][lst[5]]
+                    bill['dataora_intervento'] = js[i][lst[6]]
+                    treePreventivo.insert(parent='',index='end',iid=i,text='', values=( js[i][lst[3]], js[i][lst[4]], js[i][lst[5]], js[i][lst[6]]))
+
             treePreventivo.pack()
  # FORM _________________________________________________________________________________________________________________________________________           
 
@@ -201,12 +203,9 @@ def getTicketProfessionistById():
 def getPreventivoByIdTicket():
             print("getPreventivoByIdTicket(")
             url = 'http://localhost:8000/getpreventivoprofessionistbyidticket'
-            #print("id preventivo : " + str(ticketId))
             credentials = { 'id_professionista': app.session['id'], 'id_ticket': ticketId }
             headers = {'Content-Type': 'application/x-www-form-urlencoded'}
             response = requests.post(url, data=credentials, headers=headers)
-            #print("Status code: ", response.status_code)
-            #print("text: ", response.text)
 
             if response.text != None :
                 return response.json() 
@@ -237,8 +236,7 @@ def insertFatturaProfessionist(controller):
     test_response = requests.post(url, files = file )
 
     if test_response.ok:
-        #print("Upload effettuato correttamente")
-        controller.show_frame(mainpage.MainPage)
+        print("Upload effettuato correttamente")
     else:
         print("upload non riuscito")
 
@@ -253,11 +251,10 @@ def insertFatturaProfessionist(controller):
                 'path': "http://localhost/fatture/" + nome_pdf 
                  }
     response = requests.post(url, data=credentials, headers=headers)
-    #print("Status code: ", response.status_code)
-    #print("text: ", response.text)
 
     if response.text == 'Inserito correttamente':
         messagebox.showinfo('Risultato Inserimento','Fattura creata e inviata correttamente')
+        controller.show_frame(mainpage.MainPage)
     else:
         messagebox.showinfo('Risultato Inserimento','inserimento negato')
     return response.text  

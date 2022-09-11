@@ -90,7 +90,7 @@ class PreventiveId(Frame):
         title = Label(buttonDenyframe, text="Rifiuta il Ticket",  font=("times new roman", 12, "bold"), fg="Gray")  
         title.pack(side="top",anchor=CENTER,  pady = 10, padx=10)
 
-        btn_deny = Button(buttonDenyframe,  text="Rifiuta", command=denyticket, font=("times new roman",12)).pack(side="top",anchor=CENTER,  pady = 10, padx=10)
+        btn_deny = Button(buttonDenyframe,  text="Rifiuta", command= lambda  :denyticket(controller), font=("times new roman",12)).pack(side="top",anchor=CENTER,  pady = 10, padx=10)
 
             
         def printPreventivi(*args):
@@ -98,17 +98,18 @@ class PreventiveId(Frame):
             preventiveId = -1
             lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
-            total_rows = len(jsn)
+            if(len(tree.get_children())!= 0 ):
+                for i in tree.get_children():
+                    tree.delete(i)
 
-            for i in tree.get_children():
-              tree.delete(i)
+            if(jsn != None):
+                total_rows = len(jsn)
 
-            for i in range(total_rows):   #row
-                if jsn[i][lst[1]] == 'creato':
-                    payload['id_ticket'] = jsn[i][lst[0]]
-                    tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-            
-            #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
+                for i in range(total_rows):   #row
+                    if jsn[i][lst[1]] == 'creato':
+                        payload['id_ticket'] = jsn[i][lst[0]]
+                        tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+
             tree.pack()
 
             total_rows = len(jsn)
@@ -147,8 +148,7 @@ class PreventiveId(Frame):
                     
                         self.e.grid(row=i+1, column=j)
                         list_entry.append(self.e)
-                        #self.e.insert(END, jsn[i][lst[j]])
-                        #self.e.configure(state='disabled')
+
                 self.e = Entry(contentframe, width=30, fg='blue',font=('Arial',10,'bold'))
                 self.e = Button(contentframe, text=">>>", command= lambda  : insertPreventivoProfessionista(list_entry,controller))
                 self.e.grid(row=i+1, column=len(lst)+1 ) # , width=4, height=2
@@ -183,7 +183,6 @@ def insertPreventivoProfessionista(list_entry,controller):
 
     for i in range(len(list_entry)):
      payload[lst[i]] = list_entry[i].get()
-     #print(lst[i] + "  ->  " + payload[lst[i]])
  
     payload['id_professionista'] = app.session['id']
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -196,7 +195,7 @@ def insertPreventivoProfessionista(list_entry,controller):
         messagebox.showinfo('Risultato Inserimento','inserimento negato')
     return response.text      
 
-def denyticket():
+def denyticket(controller):
     print("/denyticket")
     url = 'http://localhost:8000/denyticket'
     payload = { 'id_ticket': preventiveId }
@@ -205,6 +204,7 @@ def denyticket():
 
     if response.text == 'Preventivo rifiutato':
         messagebox.showinfo('Risultato Inserimento','Ticket rifiutato')
+        controller.show_frame(mainpage.MainPage)
     else:
         messagebox.showinfo('Risultato Inserimento','Non siamo riusciti a rifiutare il ticket')
     return response.text      
@@ -278,15 +278,17 @@ class PreventiveAll(Frame):
 
         def printAllPreventivi(*args):
             jsn = getPreventiviInAttesaProfessionist()
-            total_rows = len(jsn)
+            
+            if(len(tree1.get_children())!= 0 ):
+                for i in tree1.get_children():
+                    tree1.delete(i)
 
-            for i in tree1.get_children():
-              tree1.delete(i)
+            if(jsn != None):
+                total_rows = len(jsn)
 
-            for i in range(total_rows):   #row `id_preventivo`, `id_ticket`, `id_professionista`, `descrizione_intervento`, `materiali_o_ricambi_previsti`, `costo`, `dataora_intervento`
-                tree1.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-    
-            #tree1.bind("<Button-1>", lambda *args: self._handle_button(*args,tree1,controller)) #'<Alt-t>'
+                for i in range(total_rows):   
+                    tree1.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+        
             tree1.pack()
 
         frameTable.bind('<Expose>',lambda  *args: printAllPreventivi(*args) )

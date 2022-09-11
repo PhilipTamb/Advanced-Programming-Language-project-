@@ -40,6 +40,8 @@ class LoginFrame(Frame):
         f_password = Label(frameLogin, text="Password", font=("times new roman", 15, "bold"), bg="gray92", fg="gray").pack(side="top",anchor=CENTER,  pady = 10, padx=10)
         self.password = Entry(frameLogin, font=("times new roman", 15), bg="lightgray")
         self.password.pack(side="top",anchor=CENTER,  pady = 5, padx=5)
+
+        print(" ID: "+ app.session["id"])
        
         def login_function():
          print("loginFunction")

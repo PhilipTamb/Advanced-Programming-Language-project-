@@ -90,16 +90,20 @@ class Invoices(Frame):
                 
         def printTicket(*args):
             jsn = getTicketProfessionist()
-            total_rows = len(jsn)
 
-            for i in tree.get_children():
-              tree.delete(i)
-              
-            for i in range(total_rows):   #row
-             if jsn[i][lst[1]] == 'in corso' :
-                  tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+            if(len(tree.get_children())!= 0 ):
+                for i in tree.get_children():
+                    tree.delete(i)
+
+            if(jsn != None):
+                total_rows = len(jsn)
+                
+                for i in range(total_rows):   #row
+                   if jsn[i][lst[1]] == 'in corso' :
+                    tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+                
+                tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
             
-            tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
             tree.pack()
         
         frameTable.bind('<Expose>',lambda  *args: printTicket(*args) )

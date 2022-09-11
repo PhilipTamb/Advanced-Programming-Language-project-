@@ -75,6 +75,8 @@ class MainPage(Frame):
         tree.heading("Titolo",text="Titolo",anchor=CENTER)
         tree.heading("Descrizione",text="Descrizione",anchor=CENTER)
 
+        print(" ID: "+ app.session["id"])
+
         frameTable.bind('<Expose>',lambda  *args: MainPage.printTicket(tree,buttonframe,*args) )
 
     def printTicket(tree,buttonframe,*args):
@@ -83,41 +85,30 @@ class MainPage(Frame):
         l1.grid(row = 3, column = 0, pady = 0, padx = 0)
 
         jsn = MainPage.getTicketProfessionist()
-        total_rows = len(jsn)
-        lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
 
-        for i in tree.get_children():
-            tree.delete(i)
-        
-        for i in range(total_rows):   
-            if jsn[i][lst[1]] == 'creato' or jsn[i][lst[1]] == 'in attesa' or jsn[i][lst[1]] == 'in corso':
-                tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
-        
-        #tree.bind("<Button-1>", lambda *args: self._handle_button(*args,tree,controller)) #'<Alt-t>'
+        if(len(tree.get_children())!= 0 ):
+            for i in tree.get_children():
+                tree.delete(i)
+
+        if(jsn != None):
+            total_rows = len(jsn)
+            lst = ["Id", "Stato", "Categoria", "Titolo", "Descrizione"]
+
+            for i in range(total_rows):   
+                if jsn[i][lst[1]] == 'creato' or jsn[i][lst[1]] == 'in attesa' or jsn[i][lst[1]] == 'in corso':
+                    tree.insert(parent='',index='end',iid=i,text='', values=( jsn[i][lst[0]], jsn[i][lst[1]], jsn[i][lst[2]], jsn[i][lst[3]],  jsn[i][lst[4]]))
+
         tree.pack()
 
     def _handle_button(self,event,tree,controller, *args):
-            print(self)
-            print(tree)
-            print(type(self))
-
             children_widgets = tree.winfo_children()
-            for child_widget in children_widgets:
-                print(child_widget)
-
-            #print(args)
-            print(event.num)
-            print(event.x)
-            print(event.y)
-            #tree = self.focus_get()
-            print(tree.focus_get())
+         #   for child_widget in children_widgets:
+         #       print(child_widget)
 
             for selected_item in tree.selection():
                 item = tree.item(selected_item)
-                print(item)
                 record = item['values']
-                print(record)
-                print(record[0])
+                print("preventive id: " + record[0])
                 preventive.preventiveId = record[0]
                 if preventive.preventiveId  != -1:
                   controller.show_frame(preventive.PreventiveId)
@@ -128,9 +119,6 @@ class MainPage(Frame):
         credentials = { 'id_professionista': app.session['id']}
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         response = requests.post(url, data=credentials, headers=headers)
-
-        print("Status code: ", response.status_code)
-        print("text: ", response.text)
         return response.text
     
     def getTicketProfessionist():
@@ -146,7 +134,7 @@ class MainPage(Frame):
             return response.text
 
 def logout(controller):
-    app.session["id"] = ""
+    app.session["id"] = " "
     app.session["login"] = 0
     controller.show_frame(login.LoginFrame)
 
