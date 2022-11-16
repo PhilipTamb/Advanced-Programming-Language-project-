@@ -27,3 +27,9 @@ questo perchè app.py conterrà il main
 
 per quanto riguarda il server Go questo dovrà essere posizionato all'interno del server apache e quindi al path C:\xampp\htdocs\  per i terminali windows e nell'analogo path /var/www/html/ per terminali linux.
 Al path sopraindicato oltre alla directory ServerGolang dovrà essere creata una cartella fatture per permetter al server di salvarsi i file pdf.
+
+
+
+SERVER GOLANG 
+per quanto riguarda il server bisogna modificare le credenziali per l'accesso al DB nella riga 49 del file DatabaseManagment.go
+"user:password@tcp(localhost:3306)/instafix"
