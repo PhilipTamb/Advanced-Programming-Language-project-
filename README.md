@@ -67,7 +67,7 @@ questo perchè app.py conterrà il main
 per quanto riguarda il server Go questo dovrà essere posizionato all'interno del server apache e quindi al path C:\xampp\htdocs\  per i terminali windows e nell'analogo path /var/www/html/ per terminali linux.
 Al path sopraindicato oltre alla directory ServerGolang dovrà essere creata una cartella fatture per permetter al server di salvarsi i file pdf.
 
-Al prio lancio del codice è necessario creare il db di nome instafix in mysql lasciandolo vuoto, sarè lo stesso server Go a chiedervi se volete popolare il DB con le tabelle perchè è la prima esecuzione e se volete avviarlo passando questo passaggio.
+Al primo lancio del codice è necessario creare il db di nome instafix in mysql lasciandolo vuoto, sarè lo stesso server Go a chiedervi se volete popolare il DB con le tabelle perchè è la prima esecuzione e se volete avviarlo passando questo passaggio.
 
 Inoltre all'esecuzione di Golang potrebbero verificarsi degli errori dovuti alle variabili dell'ambiente di esecuzione, è quindi necessario lanciare dal terminale del server i seguenti comandi:
 go env -w GO111MODULE=auto
