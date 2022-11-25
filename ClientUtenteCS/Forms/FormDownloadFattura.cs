@@ -31,10 +31,10 @@ namespace ClientUtenteCS.Forms
             {
                 var datiUtente = new Dictionary<string, string>
                 {
-                    {"mail", FormLogin.emailUtente},
+                    {"id_utente", FormLogin.idUtente},
                     {"id_ticket", idTicket}
                 };
-
+               
                 var datiDaInviare = new FormUrlEncodedContent(datiUtente);
                 var result = await scaricaFattura.HttpPostAsync("http://localhost:8000/downloadfattura", datiDaInviare);
 

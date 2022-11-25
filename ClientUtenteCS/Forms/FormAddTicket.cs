@@ -21,7 +21,7 @@ namespace ClientUtenteCS.Forms
             string titolo = textTitoloTicket.Text;
             string categoria = comboBoxCategoriaTicket.Text;
             string descrizione = textBoxDescrTicket.Text;
-            string userEmail = FormLogin.emailUtente;
+            string idUser = FormLogin.idUtente;
 
             if (titolo == String.Empty || categoria == String.Empty || descrizione == String.Empty) {
                 MessageBox.Show("Attenzione: uno o più campi vuoti", "Controlla i campi", MessageBoxButtons.OK,
@@ -36,7 +36,7 @@ namespace ClientUtenteCS.Forms
                     {"titolo", titolo },
                     {"categoria", categoria },
                     {"descrizione", descrizione },
-                    {"email", userEmail}
+                    {"id_utente", idUser}
                 };
 
                 var datiDaInviare = new FormUrlEncodedContent(datiTicket);

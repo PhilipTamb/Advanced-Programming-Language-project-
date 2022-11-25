@@ -28,7 +28,7 @@ namespace ClientUtenteCS.Forms
             for (int i = 0; i < listViewProfessionisti.Items.Count; i++)
             {
                 Richieste selectProfessionista = new Richieste();
-                string userEmail = FormLogin.emailUtente;
+                string idUser = FormLogin.idUtente;
                 string idProfessionista = listViewProfessionisti.SelectedItems[0].SubItems[5].Text;
                 var rectangle = listViewProfessionisti.GetItemRect(i);
                 if (rectangle.Contains(e.Location))
@@ -41,7 +41,7 @@ namespace ClientUtenteCS.Forms
                         {
                             var datiConfermaProfessionista = new Dictionary<string, string>
                             {
-                                {"email", userEmail },
+                                {"id_utente", idUser },
                                 {"idProfessionista", idProfessionista }
                             };
 

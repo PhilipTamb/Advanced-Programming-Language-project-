@@ -24,11 +24,11 @@ namespace ClientUtenteCS.Forms
 
             try
             {
-                var mail = new Dictionary<string, string>
+                var idUser = new Dictionary<string, string>
                 {
-                    {"email", FormLogin.emailUtente}
+                    {"id_utente", FormLogin.idUtente}
                 };
-                var datiDaInviare = new FormUrlEncodedContent(mail);
+                var datiDaInviare = new FormUrlEncodedContent(idUser);
                 var result = await getTickets.HttpPostAsync("http://localhost:8000/getickets", datiDaInviare);
 
                 // utilizzo della funzione JsonConvert della libreria Newtonsoft scaricabile tramite pacchetti NuGet

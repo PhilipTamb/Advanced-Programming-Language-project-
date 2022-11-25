@@ -241,11 +241,11 @@ namespace ClientUtenteCS
 
             try
             {
-                var mail = new Dictionary<string, string>
+                var idUser = new Dictionary<string, string>
                 {
-                    {"email", FormLogin.emailUtente}
+                    {"id", FormLogin.idUtente}
                 };
-                var datiDaInviare = new FormUrlEncodedContent(mail);
+                var datiDaInviare = new FormUrlEncodedContent(idUser);
                 var result = await getNome.HttpPostAsync("http://localhost:8000/getnome", datiDaInviare);
 
                 if (result.Equals("Errore generico"))

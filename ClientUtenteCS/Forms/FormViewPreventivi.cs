@@ -40,11 +40,11 @@ namespace ClientUtenteCS.Forms
 
             try
             {
-                var mail = new Dictionary<string, string>
+                var idUser = new Dictionary<string, string>
                 {
-                    {"email", FormLogin.emailUtente}
+                    {"id_utente", FormLogin.idUtente}
                 };
-                var datiDaInviare = new FormUrlEncodedContent(mail);
+                var datiDaInviare = new FormUrlEncodedContent(idUser);
                 var result = await getPreventivi.HttpPostAsync("http://localhost:8000/getpreventivi", datiDaInviare);
                 List<Preventivo> arrayPreventivi = JsonConvert.DeserializeObject<List<Preventivo>>(result);
 

@@ -23,13 +23,13 @@ namespace ClientUtenteCS.Forms
 
             try
             {
-                var mail = new Dictionary<string, string>
+                var userId = new Dictionary<string, string>
                 {
-                    {"email", FormLogin.emailUtente }
+                    {"id_utente", FormLogin.idUtente }
                 };
 
 
-                var datiDaInviare = new FormUrlEncodedContent(mail);
+                var datiDaInviare = new FormUrlEncodedContent(userId);
                 var result = await getProfessionistiDaRecensire.HttpPostAsync("http://localhost:8000/getprofessionistidavotare", datiDaInviare);
 
                 List<Professionista> arrayProfessionisti = JsonConvert.DeserializeObject<List<Professionista>>(result);
@@ -89,7 +89,7 @@ namespace ClientUtenteCS.Forms
             {
                 var datiValutazione = new Dictionary<string, string>
                 {
-                    {"mail", FormLogin.emailUtente },
+                    {"id_utente", FormLogin.idUtente },
                     {"id_ticket", idTicket },
                     {"voto", voto },
                     {"id_professionista", idProfessionista }

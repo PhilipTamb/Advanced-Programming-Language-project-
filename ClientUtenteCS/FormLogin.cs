@@ -9,7 +9,7 @@ namespace ClientUtenteCS
     public partial class FormLogin : Form
     {
 
-        public static string emailUtente;
+        public static string idUtente;
         public FormLogin()
         {
             InitializeComponent();
@@ -39,6 +39,7 @@ namespace ClientUtenteCS
                 var datiDaInviare = new FormUrlEncodedContent(datiUtente);
                 var result = await loginPost.HttpPostAsync("http://localhost:8000/login", datiDaInviare);
 
+
                 if (result.Equals("Credenziali errati"))
                 {
                     MessageBox.Show("L'email o la password sono errati. Ricontrolla i dati",
@@ -53,7 +54,7 @@ namespace ClientUtenteCS
                 }
                 else
                 {
-                    emailUtente = email;
+                    idUtente = result;
                     new FormHomepage().Show();
                     this.Hide();
                 }
